@@ -36,7 +36,7 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          FORCE_FULL: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || inputs.force }}
+          FORCE_FULL: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || inputs.force) && 'true' || 'false' }}
         run: python src/omo/ci_changes.py --base "$BASE_SHA" --head "$HEAD_SHA" --force-full "$FORCE_FULL" --github-output "$GITHUB_OUTPUT"
   real-model:
     needs: changes
