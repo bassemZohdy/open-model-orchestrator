@@ -1,8 +1,14 @@
 name: OMO real model validation
 on:
+  pull_request:
   push:
-    branches: [main, 'feat/**', 'fix/**']
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Run the full real-model validation suite'
+        required: false
+        type: boolean
+        default: true
   workflow_call:
     inputs:
       force:
@@ -22,18 +28,22 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
           fetch-depth: 0
       - name: Select expensive validation
         id: select
         env:
-          BASE_SHA: ${{ github.event.before }}
-        run: python src/omo/ci_changes.py --base "$BASE_SHA" --head "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          FORCE_FULL: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || inputs.force) && 'true' || 'false' }}
+        run: python src/omo/ci_changes.py --base "$BASE_SHA" --head "$HEAD_SHA" --force-full "$FORCE_FULL" --github-output "$GITHUB_OUTPUT"
   real-model:
     needs: changes
     if: >-
       github.repository == 'bassemZohdy/open-model-orchestrator' &&
-      (needs.changes.outputs.model == 'true' || inputs.force)
+      (needs.changes.outputs.model == 'true' || inputs.force ||
+      github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
