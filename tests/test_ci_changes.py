@@ -1,3 +1,4 @@
+import argparse
 import subprocess
 from pathlib import Path
 
@@ -123,7 +124,7 @@ def test_empty_or_false_force_flag_does_not_force_validation(value: str) -> None
 
 
 def test_invalid_force_flag_is_rejected() -> None:
-    with pytest.raises(Exception, match="expected true or false"):
+    with pytest.raises(argparse.ArgumentTypeError, match="expected true or false"):
         _parse_bool("sometimes")
 
 
