@@ -17,3 +17,7 @@ One persistent inference worker is separately supervised; no per-web-worker dupl
 Raw prompts, completions, tool values and training-data capture are disabled. Operational logs contain generated request ID, finite action/status and duration. Validation errors exclude input values; native model diagnostics are suppressed. Operational metrics are not a learning dataset. Original synthetic evaluation responses are explicitly recorded offline and contain no user traffic.
 
 Remaining work: independent adversarial review, broader malformed native-input fuzzing, container vulnerability scanning/signing, robust authentication for multiple tenants, and operating-system isolation stronger than a shared container. See TODO.md for acceptance criteria.
+
+## Observed dependency advisory — release blocker
+
+`pip-audit==2.10.1` reported DiskCache 5.6.3 / CVE-2025-69872 (PYSEC-2026-2447, duplicated in the feed). No fixed version was listed. This is a transitive dependency of llama-cpp-python. OMO never constructs LlamaDiskCache, calls set_cache or exposes cache paths; the selected binding initializes `self.cache=None`. The vulnerable pickle path requires an attacker-writable cache plus a subsequent deserializing read. OMO supplies neither. Nevertheless this is an observed dependency finding, not a clean audit; candidate publication requires a strict audit and is blocked pending a fixed upstream dependency or an explicitly reviewed VEX decision. See [upstream advisory](https://github.com/advisories/GHSA-w8v5-vhqr-4h9v) and docs/evidence/pip-audit.json.

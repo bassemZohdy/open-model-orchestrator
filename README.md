@@ -9,7 +9,7 @@ A small Python agent with a bundled generative CPU model, exact computation, a b
 Python 3.12, `uv`, and a C/C++ build toolchain are required for the first installation. On macOS use Apple Clang; on Linux install GCC/G++ and CMake. The selected model is 386,404,992 bytes.
 
 ```bash
-uv sync --locked --build-constraint build-constraints.txt
+uv sync --locked
 uv run --no-sync python scripts/download_model.py
 OMO_SANDBOX_ENABLED=true uv run --no-sync omo
 ```
@@ -18,7 +18,7 @@ Linux toolchain override if the environment points at an unavailable compiler:
 
 ```bash
 CC=gcc CXX=g++ CMAKE_ARGS='-DGGML_NATIVE=OFF -DGGML_BLAS=OFF -DGGML_OPENMP=OFF' \
-  uv sync --locked --build-constraint build-constraints.txt
+  uv sync --locked
 ```
 
 The server binds to `127.0.0.1:8000`. Local operations require no provider key. Startup validates the pinned model checksum, loads one model worker and warms it before readiness. No downloads occur in request processing.

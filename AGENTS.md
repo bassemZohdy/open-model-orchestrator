@@ -4,7 +4,7 @@ Work only in bassemZohdy/open-model-orchestrator. Do not modify or introduce rel
 
 Read README.md, docs/adr/001-baseline.md, docs/SECURITY_MODEL.md and TODO.md. Required checks:
 
-- `uv sync --locked --build-constraint build-constraints.txt`
+- `uv sync --locked`
 - `uv run --no-sync ruff check .` and `uv run --no-sync ruff format --check .`
 - `uv run --no-sync mypy`
 - `uv run --no-sync pytest -m 'not model' -q`

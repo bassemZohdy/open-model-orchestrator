@@ -8,9 +8,9 @@ ENV UV_PROJECT_ENVIRONMENT=/app/.venv \
     CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_BLAS=OFF -DGGML_OPENMP=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF" \
     UV_PYTHON_DOWNLOADS=never
 COPY pyproject.toml uv.lock build-constraints.txt ./
-RUN uv sync --locked --no-dev --no-install-project --build-constraint build-constraints.txt
+RUN uv sync --locked --no-dev --no-install-project
 COPY src ./src
-RUN uv sync --locked --no-dev --no-editable --build-constraint build-constraints.txt
+RUN uv sync --locked --no-dev --no-editable
 
 FROM python:3.12-slim-bookworm@sha256:782412e85d0f0984994c290652577d4018aff08145c85b262bb63dc0c7522254 AS runtime
 WORKDIR /app

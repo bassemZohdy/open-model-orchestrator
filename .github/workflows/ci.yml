@@ -28,7 +28,7 @@ jobs:
           version: '0.12.11'
           python-version: '3.12'
           enable-cache: true
-      - run: uv sync --locked --build-constraint build-constraints.txt
+      - run: uv sync --locked
       - run: uv lock --check
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .

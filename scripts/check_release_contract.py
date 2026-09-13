@@ -19,7 +19,11 @@ release = yaml.safe_load(Path(".github/workflows/release.yml").read_text())
 # PyYAML 1.1 resolves an unquoted `on` key to True; accept that representation.
 events = release.get("on", release.get(True))
 assert set(events) == {"workflow_dispatch"}
-assert release["jobs"]["publish-platform"]["needs"] == ["validation", "model-validation"]
+assert release["jobs"]["publish-platform"]["needs"] == [
+    "validation",
+    "model-validation",
+    "security-audit",
+]
 assert release["jobs"]["publish-platform"]["environment"] == "release"
 assert "github.ref == 'refs/heads/main'" in release["jobs"]["authorize"]["if"]
 assert "approved_commit" in events["workflow_dispatch"]["inputs"]

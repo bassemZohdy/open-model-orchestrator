@@ -4,6 +4,8 @@ Verified GitHub account: `bassemZohdy`. Target repository: `bassemZohdy/open-mod
 
 Hugging Face account: `BassemZohdy`. The connector reported read-repos/read-mcp/profile/openid/jobs scopes, with no publishing scope; its advertised token expiry was already past the environment clock even though identity/reads succeeded. Do not infer durable publishing authorization. Intended model target `BassemZohdy/open-model-orchestrator` and dataset target `BassemZohdy/open-model-orchestrator-dataset` were not found through the available read connection. Neither is created or published. The deployed base checkpoint is the upstream revision in models/manifest.json; it must not be published as a new OMO fine-tune.
 
+Verified Docker Hub namespace: `bzohdy`; image target `bzohdy/open-model-orchestrator`. Actions login succeeded in run 34754068464/job 103715356976. Authentication is verified; push permission and image publication are not. Account artifact ID 10315684770, SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`.
+
 The owner added Docker Hub Actions variables/secrets. Account preflight accepts `DOCKERHUB_USERNAME` (variable or secret) and `DOCKERHUB_TOKEN` (secret), with `DOCKER_USERNAME`/`DOCKER_TOKEN` aliases. It checks existence and authenticates to Docker Hub without printing the token. An artifact records the namespace and distinguishes authentication from untested push permission. No namespace is guessed from the GitHub username.
 
 ## Workflows

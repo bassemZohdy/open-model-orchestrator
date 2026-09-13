@@ -38,8 +38,23 @@ jobs:
   model-validation:
     needs: authorize
     uses: ./.github/workflows/model-validation.yml
+  security-audit:
+    needs: authorize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+      - run: uv export --locked --no-dev --no-emit-project --no-hashes -o /tmp/runtime-requirements.txt
+      - name: Strict dependency audit; known DiskCache finding blocks publication
+        run: uvx --from pip-audit==2.10.1 pip-audit -r /tmp/runtime-requirements.txt --no-deps --disable-pip
   publish-platform:
-    needs: [validation, model-validation]
+    needs: [validation, model-validation, security-audit]
     environment: release
     strategy:
       fail-fast: false

@@ -28,7 +28,7 @@ jobs:
           version: '0.12.11'
           python-version: '3.12'
           enable-cache: true
-      - run: uv sync --locked --build-constraint build-constraints.txt
+      - run: uv sync --locked
       - run: uv run --no-sync python scripts/download_model.py
       - run: uv run --no-sync pytest -m model -q
       - run: uv run --no-sync python evaluation/run.py --output evidence/evaluation.json
