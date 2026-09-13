@@ -49,7 +49,7 @@ def test_reviewer_trust_and_execution_bounds() -> None:
     assert "secrets.CLAUDE_CODE_OAUTH_TOKEN" in inputs["claude_code_oauth_token"]
     assert "--comment" in inputs["prompt"]
     assert "Never edit files" in inputs["prompt"]
-    assert "--max-turns 20" in inputs["claude_args"]
+    assert "--max-turns 40" in inputs["claude_args"]
     assert '--disallowedTools "Edit,Write,NotebookEdit"' in inputs["claude_args"]
 
 
