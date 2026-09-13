@@ -190,6 +190,9 @@ def select(base: str | None, head: str | None, force_full: bool = False) -> dict
 
 def _parse_bool(value: str) -> bool:
     lowered = value.strip().lower()
+    # GitHub Actions may render a false boolean expression as an empty env value.
+    if not lowered:
+        return False
     if lowered not in {"true", "false"}:
         raise argparse.ArgumentTypeError("expected true or false")
     return lowered == "true"
