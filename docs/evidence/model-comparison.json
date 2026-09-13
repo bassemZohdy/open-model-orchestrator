@@ -1,0 +1,138 @@
+{
+  "hardware": "x86_64",
+  "threads": 4,
+  "context": 2048,
+  "peak_process_rss_kib": 525076,
+  "results": [
+    {
+      "model": "research/SmolLM2-135M-Instruct-Q8_0.gguf",
+      "bytes": 144811360,
+      "startup_seconds": 0.09651846399992792,
+      "rows": [
+        {
+          "prompt": "What is a noun?",
+          "answer": "A noun is a word that refers to a person, place, thing, or idea. It can be a name, a title, a description, or a description of an object. Nouns can be simple, compound, or possessive nouns. They can also be abstract nouns, which are nouns that describe abstract concepts, such as \"tree\" or \"cloud.\"",
+          "reference_terms": [
+            "person",
+            "place",
+            "thing"
+          ],
+          "passed": true,
+          "seconds": 0.5033752429999367,
+          "usage": {
+            "prompt_tokens": 28,
+            "completion_tokens": 74,
+            "total_tokens": 102
+          }
+        },
+        {
+          "prompt": "What is gravity?",
+          "answer": "Gravity is a fundamental force of nature that attracts objects with mass towards each other. It is a result of the interaction between the mass of an object and the distance between it and the center of the Earth. Objects with mass experience a force that is proportional to the product of their masses and inversely proportional to the square of the distance between them. This force is what keeps us on Earth, and it plays a crucial role in many natural phenomena, such as the tides, the orbits",
+          "reference_terms": [
+            "force"
+          ],
+          "passed": true,
+          "seconds": 0.5994887480001125,
+          "usage": {
+            "prompt_tokens": 27,
+            "completion_tokens": 96,
+            "total_tokens": 123
+          }
+        },
+        {
+          "prompt": "What is photosynthesis?",
+          "answer": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy from the sun into chemical energy stored in glucose, a simple sugar that serves as a primary energy source for the plant. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems.",
+          "reference_terms": [
+            "light"
+          ],
+          "passed": true,
+          "seconds": 0.42811608300053194,
+          "usage": {
+            "prompt_tokens": 27,
+            "completion_tokens": 62,
+            "total_tokens": 89
+          }
+        },
+        {
+          "prompt": "What is the opposite of hot?",
+          "answer": "The opposite of hot is cold.",
+          "reference_terms": [
+            "cold"
+          ],
+          "passed": true,
+          "seconds": 0.062857638999958,
+          "usage": {
+            "prompt_tokens": 30,
+            "completion_tokens": 7,
+            "total_tokens": 37
+          }
+        }
+      ]
+    },
+    {
+      "model": "research/smollm2-360m-instruct-q8_0.gguf",
+      "bytes": 386404992,
+      "startup_seconds": 0.09522294700036582,
+      "rows": [
+        {
+          "prompt": "What is a noun?",
+          "answer": "A noun is a word that represents a person, place, thing, or idea.",
+          "reference_terms": [
+            "person",
+            "place",
+            "thing"
+          ],
+          "passed": true,
+          "seconds": 0.8805492030005553,
+          "usage": {
+            "prompt_tokens": 28,
+            "completion_tokens": 17,
+            "total_tokens": 45
+          }
+        },
+        {
+          "prompt": "What is gravity?",
+          "answer": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+          "reference_terms": [
+            "force"
+          ],
+          "passed": true,
+          "seconds": 0.2630668140000125,
+          "usage": {
+            "prompt_tokens": 27,
+            "completion_tokens": 18,
+            "total_tokens": 45
+          }
+        },
+        {
+          "prompt": "What is photosynthesis?",
+          "answer": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, producing oxygen as a byproduct.",
+          "reference_terms": [
+            "light"
+          ],
+          "passed": true,
+          "seconds": 0.3692701230002058,
+          "usage": {
+            "prompt_tokens": 27,
+            "completion_tokens": 27,
+            "total_tokens": 54
+          }
+        },
+        {
+          "prompt": "What is the opposite of hot?",
+          "answer": "The opposite of hot is cold.",
+          "reference_terms": [
+            "cold"
+          ],
+          "passed": true,
+          "seconds": 0.14209862900042936,
+          "usage": {
+            "prompt_tokens": 30,
+            "completion_tokens": 7,
+            "total_tokens": 37
+          }
+        }
+      ]
+    }
+  ]
+}

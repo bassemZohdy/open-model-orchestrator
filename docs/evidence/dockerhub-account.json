@@ -1,0 +1,12 @@
+{
+  "namespace": "bzohdy",
+  "image": "bzohdy/open-model-orchestrator",
+  "authentication": "verified",
+  "push_permission": "not tested",
+  "publication": "not published",
+  "workflow_run_id": 34754068464,
+  "job_id": 103715356976,
+  "artifact_id": 10315684770,
+  "artifact_digest": "sha256:6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16",
+  "identity_evidence": "Actions login job logged username bzohdy and Login Succeeded; artifact download returned 403"
+}

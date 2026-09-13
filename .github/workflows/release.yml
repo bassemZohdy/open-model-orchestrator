@@ -1,0 +1,117 @@
+name: OMO approved application release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Approved application version, e.g. 0.1.0-rc.1'
+        required: true
+        type: string
+      approved_commit:
+        description: 'Exact 40-character commit SHA approved for publication'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: omo-application-release
+  cancel-in-progress: false
+jobs:
+  authorize:
+    if: github.repository == 'bassemZohdy/open-model-orchestrator' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify exact approved revision and version
+        env:
+          APPROVED: ${{ inputs.approved_commit }}
+          ACTUAL: ${{ github.sha }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          python - <<'PY'
+          import os,re
+          assert os.environ['APPROVED']==os.environ['ACTUAL'], 'Approval does not match actual head'
+          assert re.fullmatch(r'\d+\.\d+\.\d+(?:-rc\.\d+)?',os.environ['VERSION']), 'Invalid release version'
+          PY
+  validation:
+    needs: authorize
+    uses: ./.github/workflows/ci.yml
+    with:
+      strict_security: true
+  model-validation:
+    needs: authorize
+    uses: ./.github/workflows/model-validation.yml
+  security-audit:
+    needs: authorize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+      - run: uv export --locked --no-dev --no-emit-project --no-hashes -o /tmp/runtime-requirements.txt
+      - name: Strict dependency audit; known DiskCache finding blocks publication
+        run: uvx --from pip-audit==2.10.1 pip-audit -r /tmp/runtime-requirements.txt --no-deps --disable-pip
+  publish-platform:
+    needs: [validation, model-validation, security-audit]
+    environment: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Resolve namespace
+        env:
+          NAMESPACE: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME || vars.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+        run: |
+          python - <<'PY'
+          import os,re
+          namespace=os.environ['NAMESPACE']
+          assert re.fullmatch(r'[a-z0-9][a-z0-9_-]{1,63}',namespace)
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('IMAGE='+namespace+'/open-model-orchestrator\n')
+          PY
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME || vars.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKER_TOKEN }}
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        id: build
+        with:
+          context: .
+          target: bundled
+          push: true
+          tags: ${{ env.IMAGE }}:candidate-${{ github.sha }}-${{ matrix.arch }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha,scope=omo-${{ matrix.arch }}
+      - name: Test the published candidate digest and record partial publication
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          ARCH: ${{ matrix.arch }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          docker pull "$IMAGE@$DIGEST"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --memory 1536m --pids-limit 128 --cpus 4 --tmpfs /tmp:rw,noexec,nosuid,size=16m --entrypoint python "$IMAGE@$DIGEST" scripts/container_smoke.py
+          python scripts/release_manifest.py --commit "$GITHUB_SHA" --image "$IMAGE" --digest "$DIGEST" --architecture "$ARCH" --version "$VERSION" --output "candidate-$ARCH.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: candidate-${{ matrix.arch }}
+          path: candidate-${{ matrix.arch }}.json
+          retention-days: 90
+# Stable multi-platform promotion and signing intentionally remain unavailable
+# until OMO-007 closes; partial candidate publication never advances latest.

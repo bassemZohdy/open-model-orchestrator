@@ -1,0 +1,14 @@
+.git
+.venv
+.env*
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.mypy_cache
+models/*.gguf
+models/*.part
+evaluation/results-local
+training
+research
+dist

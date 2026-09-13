@@ -1,0 +1,55 @@
+# Validation and delivery evidence
+
+Verified 2026-09-13. Implemented code and Docker changes are committed at `23a0b2881ec69f42d864d15440f8f06ef3969239` on `feat/bootstrap-v0.1`, [draft PR #1](https://github.com/bassemZohdy/open-model-orchestrator/pull/1). Later documentation commits do not change that implementation. No merge was performed.
+
+## Implemented and tested
+
+- Real SmolLM2-360M Q8_0 CPU inference through llama-cpp-python 0.3.35, with checksum verification, warmup, context/queue bounds, cancellation and worker restart.
+- Exact decimal values/units and real Monty 0.0.23 computation; no native guest eval/exec fallback. File/proc/environment/network/DNS/subprocess/FFI/package access, state reuse, inherited descriptors and resource bounds are covered by actual sandbox tests.
+- Strict configuration/API/proposal schemas, authentication, input limits, immutable registries, policy constraints before provider ranking, bounded external calls and buffered SSE. External-provider contracts use fakes; no live-provider quality or paid-inference result is claimed.
+- Bundled/slim Docker targets, hardened Compose, native AMD64/ARM64 validation, secret scanning, container reports and strict release vulnerability gates. Training is a dry-run preparation tool only.
+
+Local full suite: **103 passed in 15.34 s**. After CI exposed a process-observation race, the cancellation test was strengthened to require complete reaping; all **27 sandbox tests passed in 1.03 s**, and the updated remote 91-test contract suite passed. Ruff lint/format, strict mypy over 14 source files, lock checks, 22-record dataset validation and release-event/schedule contracts passed.
+
+The trusted real-model run for the implementation commit is [34755031771](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34755031771): **12 passed**, plus **46/46 development evaluation checks**, with zero external calls. Its artifact ID is `10315969857`; archive SHA-256 `27d597194fa85524958b16317a104e93dc7b769319d260f61d9a1b6549c3b87f`.
+
+## Measurements and their limits
+
+Local workspace: native Linux x86_64, Python 3.12.14, eight CPU quota equivalents and approximately 20 GiB RAM limit; inference uses four threads, 2048 context tokens and batch 128. Model bytes are **386,404,992**. Inference is greedy, seed 42, explicit ChatML.
+
+| Observation | Local workspace | GitHub AMD64 model job |
+|---|---:|---:|
+| Startup, including hash/load/warmup | 0.527 s | 0.631 s |
+| Warm local-answer p50 | 259.709 ms | 236.088 ms |
+| Warm local-answer empirical p95 | 479.125 ms | 380.684 ms |
+| Peak sampled application/model process-tree RSS | 608,571,392 bytes | 615,960,576 bytes |
+| Development checks | 46/46 | 46/46 |
+
+There are only **four independent local questions**, repeated ten times for latency, plus six scope challenges. These are development prompts, not a protected test set or proof of production reliability. Arabic/mixed-language rejection is not Arabic generation support. No calibrated confidence, p99 claim, GPU result or emulated/native equivalence is reported. The earlier 135M candidate's keyword checks missed quality defects; manual review rejected it. See [ADR 001](adr/001-baseline.md), [evaluation guide](EVALUATION.md), and the raw summaries in `docs/evidence/`.
+
+## Native containers
+
+The [native validation run 34755033927](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34755033927) passed all four jobs: checks, secret scan, AMD64 container and ARM64 container. Full image IDs, artifact archive digests and scan summaries are in [machine-readable evidence](evidence/ci-verification.json).
+
+| Native platform | Unpacked image bytes | Docker-save gzip bytes | Evidence artifact ID |
+|---|---:|---:|---:|
+| Linux AMD64 | 673,944,805 | 473,427,708 | 10317000839 |
+| Linux ARM64 | 687,408,938 | 469,184,947 | 10316799643 |
+
+Image IDs are local Docker image/config identifiers, **not published registry manifest digests**. Docker-save gzip size is an archive measurement, **not compressed registry transfer bytes**. Actual model answers and helper values were produced with `--network none`, read-only root, no capabilities, non-root UID, 1536 MiB memory and bounded CPU/PIDs. No local Docker daemon was available; this container evidence comes from GitHub-hosted native runners, without emulation. Other CPU feature combinations and host operating systems were not validated.
+
+## Security and publication
+
+Development tests may pass while security reports contain release-blocking findings. Rescanning both patched images confirmed no PCRE2 findings. Each platform still reports 60 package/advisory entries: 55 HIGH and five CRITICAL, spanning 21 distinct advisory IDs. These are scanner findings, not 60 demonstrated exploits. They and DiskCache 5.6.3 / CVE-2025-69872 block strict release gates. No finding was added to an ignore list. Reachability/review is still required; neither a clean audit nor VM-grade isolation is claimed.
+
+| Destination | Verified state |
+|---|---|
+| GitHub `bassemZohdy/open-model-orchestrator` | Source branch and draft PR published; main unchanged after initialization; no merge or release |
+| Docker Hub `bzohdy/open-model-orchestrator` | Login verified in run `34754068464`; artifact `10315684770`, archive SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`. Push permission untested; no candidate/stable image published by this work |
+| HF `BassemZohdy/open-model-orchestrator` | Intended target; not created/published. Connected account has no publishing scope |
+| HF `BassemZohdy/open-model-orchestrator-dataset` | Intended target; not created/published. Original data is committed in GitHub |
+| Paid training/inference, schedules, automatic promotion | Not executed; disabled |
+
+The bundled artifact remains upstream `HuggingFaceTB/SmolLM2-360M-Instruct-GGUF`, revision `593b5a2e04c8f3e4ee880263f93e0bd2901ad47f`, SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`. It is not an OMO fine-tune. Dataset SHA-256: `020e70c16088a63304f1c5fef8b505023617282d27251c5298fb2aeea30f3784`.
+
+Earlier failed runs remain visible: the first build used an unsupported uv flag (fixed), and one duplicate push run hit the cancellation-test observation race (fixed). No earlier failure is presented as a success. Final source status and PR-head checks can be independently inspected on the PR; reproducible commands are in [README](../README.md), owner setup in [RELEASE](RELEASE.md), and only remaining work in [TODO](../TODO.md).

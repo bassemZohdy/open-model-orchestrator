@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.pyc
+.env
+models/*.gguf
+models/*.part
+dist/
+build/
+*.egg-info/
+evaluation/results-local/

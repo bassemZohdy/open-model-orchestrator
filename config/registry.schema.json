@@ -1,0 +1,216 @@
+{
+  "$defs": {
+    "ModelEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "provider": {
+          "default": "openai_compatible",
+          "enum": [
+            "openai_compatible",
+            "openrouter"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "upstream_model": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_./:-]+$",
+          "title": "Upstream Model",
+          "type": "string"
+        },
+        "base_url": {
+          "title": "Base Url",
+          "type": "string"
+        },
+        "key_env": {
+          "pattern": "^OMO_PROVIDER_KEY_[A-Z0-9_]+$",
+          "title": "Key Env",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "allow_private_endpoint": {
+          "default": false,
+          "title": "Allow Private Endpoint",
+          "type": "boolean"
+        },
+        "capabilities": {
+          "default": [
+            "text"
+          ],
+          "items": {
+            "enum": [
+              "text",
+              "coding",
+              "current_information"
+            ],
+            "type": "string"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "context_tokens": {
+          "maximum": 2000000,
+          "minimum": 1024,
+          "title": "Context Tokens",
+          "type": "integer"
+        },
+        "max_output_tokens": {
+          "maximum": 65536,
+          "minimum": 8,
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "input_usd_per_million": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Usd Per Million"
+        },
+        "output_usd_per_million": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Usd Per Million"
+        },
+        "retention": {
+          "default": "unknown",
+          "enum": [
+            "none",
+            "provider_default",
+            "unknown"
+          ],
+          "title": "Retention",
+          "type": "string"
+        },
+        "priority": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "available": {
+          "default": false,
+          "title": "Available",
+          "type": "boolean"
+        },
+        "supports_tools": {
+          "default": false,
+          "title": "Supports Tools",
+          "type": "boolean"
+        },
+        "supports_structured_output": {
+          "default": false,
+          "title": "Supports Structured Output",
+          "type": "boolean"
+        },
+        "metadata_verified_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Verified At"
+        },
+        "provenance": {
+          "default": "administrator configured; quality unmeasured",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "evaluated_quality": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evaluated Quality"
+        },
+        "observed_latency_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Latency Ms"
+        }
+      },
+      "required": [
+        "id",
+        "upstream_model",
+        "base_url",
+        "key_env",
+        "context_tokens",
+        "max_output_tokens"
+      ],
+      "title": "ModelEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    },
+    "models": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ModelEntry"
+      },
+      "title": "Models",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "title": "Registry",
+  "type": "object"
+}
