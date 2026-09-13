@@ -1,0 +1,18 @@
+schema_version: "1"
+version: example-1
+models:
+  - id: openrouter-example
+    provider: openrouter
+    upstream_model: replace/with-reviewed-model
+    base_url: https://openrouter.ai/api/v1
+    key_env: OMO_PROVIDER_KEY_OPENROUTER
+    enabled: false
+    available: false
+    capabilities: [text]
+    context_tokens: 8192
+    max_output_tokens: 256
+    input_usd_per_million: null
+    output_usd_per_million: null
+    retention: unknown
+    priority: 100
+    provenance: "Administrator must verify capabilities, pricing and retention before enabling"

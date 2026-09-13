@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "Arithmetic": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "const": "decimal",
+          "default": "decimal",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "subtract",
+            "multiply",
+            "divide"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "a": {
+          "pattern": "^-?\\d{1,12}(\\.\\d{1,8})?$",
+          "title": "A",
+          "type": "string"
+        },
+        "b": {
+          "pattern": "^-?\\d{1,12}(\\.\\d{1,8})?$",
+          "title": "B",
+          "type": "string"
+        },
+        "unit": {
+          "default": "",
+          "enum": [
+            "",
+            "AED",
+            "USD",
+            "kg",
+            "m",
+            "s"
+          ],
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation",
+        "a",
+        "b"
+      ],
+      "title": "Arithmetic",
+      "type": "object"
+    },
+    "EvenSquares": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "const": "even_squares",
+          "default": "even_squares",
+          "title": "Id",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "maximum": 10000,
+            "minimum": -10000,
+            "type": "integer"
+          },
+          "maxItems": 128,
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "title": "EvenSquares",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "local_answer",
+        "helper",
+        "external_model",
+        "clarify",
+        "reject"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "capability": {
+      "default": "text",
+      "enum": [
+        "text",
+        "coding",
+        "current_information"
+      ],
+      "title": "Capability",
+      "type": "string"
+    },
+    "helper": {
+      "anyOf": [
+        {
+          "discriminator": {
+            "mapping": {
+              "decimal": "#/$defs/Arithmetic",
+              "even_squares": "#/$defs/EvenSquares"
+            },
+            "propertyName": "id"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Arithmetic"
+            },
+            {
+              "$ref": "#/$defs/EvenSquares"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Helper"
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "title": "Proposal",
+  "type": "object"
+}

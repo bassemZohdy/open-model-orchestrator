@@ -1,0 +1,39 @@
+name: OMO real model validation
+on:
+  push:
+    branches: [main, 'feat/**', 'fix/**']
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: omo-model-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real-model:
+    if: github.repository == 'bassemZohdy/open-model-orchestrator'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CC: gcc
+      CXX: g++
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      CMAKE_ARGS: '-DGGML_NATIVE=OFF -DGGML_BLAS=OFF -DGGML_OPENMP=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked --build-constraint build-constraints.txt
+      - run: uv run --no-sync python scripts/download_model.py
+      - run: uv run --no-sync pytest -m model -q
+      - run: uv run --no-sync python evaluation/run.py --output evidence/evaluation.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: real-model-evidence
+          path: evidence/
+          retention-days: 14

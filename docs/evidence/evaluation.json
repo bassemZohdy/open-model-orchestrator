@@ -1,0 +1,1310 @@
+{
+  "timestamp": "2026-09-13T11:09:03.447184+00:00",
+  "hardware": {
+    "architecture": "x86_64",
+    "cpu": "x86_64",
+    "cores_visible": 9,
+    "threads": 4,
+    "context_tokens": 2048,
+    "python": "3.12.14"
+  },
+  "dataset_sha256": "020e70c16088a63304f1c5fef8b505023617282d27251c5298fb2aeea30f3784",
+  "model": {
+    "schema_version": "1",
+    "base_model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+    "repo_id": "HuggingFaceTB/SmolLM2-360M-Instruct-GGUF",
+    "revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+    "filename": "smollm2-360m-instruct-q8_0.gguf",
+    "size_bytes": 386404992,
+    "sha256": "48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201",
+    "quantization": "Q8_0",
+    "template": "chatml-explicit-v1",
+    "license": "Apache-2.0",
+    "fine_tuned_by_omo": false
+  },
+  "runtime": "llama-cpp-python==0.3.35",
+  "sandbox": "pydantic-monty==0.0.23",
+  "startup_seconds": 0.5274105850003252,
+  "peak_sampled_tree_rss_bytes": 608571392,
+  "local_latency_ms": {
+    "samples": 40,
+    "p50": 259.709,
+    "p95_empirical": 479.125
+  },
+  "results": [
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 0,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.183,
+        "total_ms": 309.994
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 1,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.052,
+        "total_ms": 241.13
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 2,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 242.732
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 3,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.048,
+        "total_ms": 250.159
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 4,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 255.141
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 5,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.044,
+        "total_ms": 244.442
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 6,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.044,
+        "total_ms": 234.95
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 7,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 230.281
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 8,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 236.533
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-001",
+      "split": "development",
+      "repeat": 9,
+      "passed": true,
+      "response": "A noun is a word that represents a person, place, thing, or idea.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 237.466
+      },
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 17,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 0,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.039,
+        "total_ms": 295.762
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 1,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 273.642
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 2,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 273.08
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 3,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 251.657
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 4,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 272.814
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 5,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.044,
+        "total_ms": 305.636
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 6,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.057,
+        "total_ms": 288.616
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 7,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.047,
+        "total_ms": 289.106
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 8,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.047,
+        "total_ms": 264.277
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-002",
+      "split": "development",
+      "repeat": 9,
+      "passed": true,
+      "response": "Gravity is a fundamental force of nature that attracts all objects with mass towards each other.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.043,
+        "total_ms": 264.895
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 18,
+        "total_tokens": 45
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 0,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, producing oxygen as a byproduct.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.071,
+        "total_ms": 405.106
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 27,
+        "total_tokens": 54
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 1,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.065,
+        "total_ms": 479.125
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 2,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.043,
+        "total_ms": 453.581
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 3,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 460.893
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 4,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 428.255
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 5,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.044,
+        "total_ms": 396.652
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 6,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.048,
+        "total_ms": 418.512
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 7,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.047,
+        "total_ms": 412.218
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 8,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 487.688
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-003",
+      "split": "development",
+      "repeat": 9,
+      "passed": true,
+      "response": "Photosynthesis is the process by which plants, algae, and some bacteria convert light energy into chemical energy, storing it in the bonds of glucose.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 548.681
+      },
+      "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 29,
+        "total_tokens": 56
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 0,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.049,
+        "total_ms": 138.674
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 1,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.049,
+        "total_ms": 127.61
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 2,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 126.151
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 3,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.048,
+        "total_ms": 122.226
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 4,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.048,
+        "total_ms": 113.946
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 5,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.046,
+        "total_ms": 106.601
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 6,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 104.312
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 7,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.045,
+        "total_ms": 120.529
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 8,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.047,
+        "total_ms": 135.137
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-004",
+      "split": "development",
+      "repeat": 9,
+      "passed": true,
+      "response": "The opposite of hot is cold.",
+      "metadata": {
+        "action": "local_answer",
+        "reason": "evaluated_development_envelope",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "embedded_model",
+        "status": "success",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.048,
+        "total_ms": 142.381
+      },
+      "usage": {
+        "prompt_tokens": 30,
+        "completion_tokens": 7,
+        "total_tokens": 37
+      }
+    },
+    {
+      "prompt_id": "omo-005",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: no_eligible_target.",
+      "metadata": {
+        "action": "reject",
+        "reason": "no_eligible_target",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 625.526,
+        "total_ms": 625.555
+      },
+      "usage": null
+    },
+    {
+      "prompt_id": "omo-006",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: no_eligible_target.",
+      "metadata": {
+        "action": "reject",
+        "reason": "no_eligible_target",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 406.224,
+        "total_ms": 406.286
+      },
+      "usage": null
+    },
+    {
+      "prompt_id": "omo-007",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: no_eligible_target.",
+      "metadata": {
+        "action": "reject",
+        "reason": "no_eligible_target",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 584.081,
+        "total_ms": 584.108
+      },
+      "usage": null
+    },
+    {
+      "prompt_id": "omo-008",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: no_eligible_target.",
+      "metadata": {
+        "action": "reject",
+        "reason": "no_eligible_target",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 436.322,
+        "total_ms": 436.35
+      },
+      "usage": null
+    },
+    {
+      "prompt_id": "omo-009",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: no_eligible_target.",
+      "metadata": {
+        "action": "reject",
+        "reason": "no_eligible_target",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 369.467,
+        "total_ms": 369.495
+      },
+      "usage": null
+    },
+    {
+      "prompt_id": "omo-010",
+      "split": "validation",
+      "repeat": 0,
+      "passed": true,
+      "response": "This request has no permitted execution path: retrieval_unavailable.",
+      "metadata": {
+        "action": "reject",
+        "reason": "retrieval_unavailable",
+        "target": null,
+        "policy_version": "omo-policy-1",
+        "registry_version": "evaluation-1:42b9a27eb05a5ea1",
+        "confidence": null,
+        "calibration": "uncalibrated",
+        "executor": "policy",
+        "status": "policy-denied",
+        "model_revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+        "provider_attempts": 0,
+        "estimated_call_cost_usd": null,
+        "routing_ms": 0.011,
+        "total_ms": 0.017
+      },
+      "usage": null
+    }
+  ],
+  "passed": 46,
+  "samples": 46,
+  "limits": "4 development prompts repeated 10 times, not 40 independent quality examples; no reliability/calibration/language claim; keyword checks need human review",
+  "external_calls": 0,
+  "protected_test_evaluated": false,
+  "baselines": {
+    "rules_router": "exact local envelope + helper grammar + eligible configured priority",
+    "always_local": "135M/360M four-prompt comparison in docs/evidence; no broad quality claim",
+    "fixed_external": "not measured; no paid inference budget"
+  }
+}

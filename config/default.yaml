@@ -1,0 +1,4 @@
+schema_version: "1"
+host: 127.0.0.1
+sandbox_enabled: false
+external_enabled: false

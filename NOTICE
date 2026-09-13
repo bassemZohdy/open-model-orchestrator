@@ -1,0 +1,6 @@
+Open Model Orchestrator, original application code licensed Apache-2.0.
+Bundled model: HuggingFaceTB/SmolLM2-360M-Instruct-GGUF (Q8_0), Apache-2.0.
+This is an upstream base instruction model, NOT an OMO fine-tune.
+llama-cpp-python / llama.cpp: MIT. Pydantic Monty: MIT.
+Third-party licenses remain applicable; the application license does not relicense weights or data.
+Model revision, digest and artifact bytes are recorded in models/manifest.json.

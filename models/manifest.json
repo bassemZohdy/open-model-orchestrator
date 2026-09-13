@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "base_model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "repo_id": "HuggingFaceTB/SmolLM2-360M-Instruct-GGUF",
+  "revision": "593b5a2e04c8f3e4ee880263f93e0bd2901ad47f",
+  "filename": "smollm2-360m-instruct-q8_0.gguf",
+  "size_bytes": 386404992,
+  "sha256": "48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201",
+  "quantization": "Q8_0",
+  "template": "chatml-explicit-v1",
+  "license": "Apache-2.0",
+  "fine_tuned_by_omo": false
+}

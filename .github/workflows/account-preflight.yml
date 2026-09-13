@@ -1,0 +1,41 @@
+name: OMO Docker Hub account preflight
+on:
+  push:
+    branches: ['feat/bootstrap-v0.1']
+    paths: ['.github/workflows/account-preflight.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dockerhub-auth:
+    if: github.repository == 'bassemZohdy/open-model-orchestrator'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify configured names without printing token values
+        env:
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME || vars.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKER_TOKEN }}
+        run: |
+          test -n "$DOCKERHUB_USERNAME" || { echo 'Missing DOCKERHUB_USERNAME variable/secret'; exit 1; }
+          test -n "$DOCKERHUB_TOKEN" || { echo 'Missing DOCKERHUB_TOKEN secret'; exit 1; }
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME || vars.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKER_TOKEN }}
+      - name: Record verified namespace (no credentials)
+        env:
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME || vars.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+        run: |
+          python - <<'PY'
+          import json, os, re
+          namespace = os.environ['DOCKERHUB_USERNAME']
+          assert re.fullmatch(r'[a-z0-9][a-z0-9_-]{1,63}', namespace), 'Unexpected namespace'
+          with open('dockerhub-account.json', 'w') as f:
+              json.dump({'namespace': namespace, 'image': namespace + '/open-model-orchestrator', 'authentication': 'verified', 'push_permission': 'not tested', 'publication': 'not published'}, f)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dockerhub-account
+          path: dockerhub-account.json
+          retention-days: 14
