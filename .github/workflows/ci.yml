@@ -15,6 +15,21 @@ concurrency:
   group: omo-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      container: ${{ steps.select.outputs.container }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Select expensive validation
+        id: select
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python src/omo/ci_changes.py --base "$BASE_SHA" --head "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
   secrets:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -54,7 +69,8 @@ jobs:
       - run: uv run --no-sync python training/sft.py --dry-run
       - run: uv run --no-sync python scripts/check_release_contract.py
   native-container:
-    needs: [checks, secrets]
+    needs: [changes, checks, secrets]
+    if: needs.changes.outputs.container == 'true' || inputs.strict_security
     strategy:
       fail-fast: false
       matrix:
