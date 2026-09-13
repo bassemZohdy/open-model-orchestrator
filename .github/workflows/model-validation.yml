@@ -4,14 +4,36 @@ on:
     branches: [main, 'feat/**', 'fix/**']
   workflow_dispatch:
   workflow_call:
+    inputs:
+      force:
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
   group: omo-model-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      model: ${{ steps.select.outputs.model }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Select expensive validation
+        id: select
+        env:
+          BASE_SHA: ${{ github.event.before }}
+        run: python src/omo/ci_changes.py --base "$BASE_SHA" --head "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
   real-model:
-    if: github.repository == 'bassemZohdy/open-model-orchestrator'
+    needs: changes
+    if: >-
+      github.repository == 'bassemZohdy/open-model-orchestrator' &&
+      (needs.changes.outputs.model == 'true' || inputs.force)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added fail-closed, tested path selection so documentation-only changes skip real-model and native-container CI while manual and release validation remain complete.
+
 ## Unreleased — reviewer workflow hardening
 
 - Consolidated Claude into one review-only PR workflow; removed the comment-driven assistant (manual retry remains available through Actions).

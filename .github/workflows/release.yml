@@ -40,6 +40,8 @@ jobs:
   model-validation:
     needs: authorize
     uses: ./.github/workflows/model-validation.yml
+    with:
+      force: true
   security-audit:
     needs: authorize
     runs-on: ubuntu-24.04
