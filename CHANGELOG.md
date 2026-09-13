@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Added fail-closed, tested path selection so documentation-only changes skip real-model and native-container CI while manual and release validation remain complete.
+- Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
+- Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
 
 ## Unreleased — reviewer workflow hardening
 
