@@ -14,6 +14,9 @@ RUN uv sync --locked --no-dev --no-editable
 
 FROM python:3.12-slim-bookworm@sha256:782412e85d0f0984994c290652577d4018aff08145c85b262bb63dc0c7522254 AS runtime
 WORKDIR /app
+# Debian DLA-4772-1: fix the PCRE2 findings in the pinned base without a
+# mutable whole-distribution upgrade. Remaining scan findings still gate release.
+RUN apt-get update && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0=10.42-1+deb12u1 && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/.venv /app/.venv
 ENV PATH=/app/.venv/bin:$PATH PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     OMO_HOST=127.0.0.1 OMO_MODEL_PATH=/app/models/embedded.gguf \
