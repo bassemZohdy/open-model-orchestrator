@@ -14,4 +14,6 @@
 - Expanded container acceptance for authentication, resource bounds and real sandbox isolation; release manifests bind code/model/data/policy identities.
 - Fixed a cancellation-test observation race and now require complete worker reaping rather than accepting zombie state.
 
+- Native AMD64 and ARM64 bundled images passed offline model/helper/sandbox/authentication/limits/shutdown acceptance at implementation commit 23a0b2881ec69f42d864d15440f8f06ef3969239. The pinned PCRE2 update removed two findings; remaining strict-audit blockers are retained in TODO.md.
+
 Publication and platform evidence are recorded separately in docs/VALIDATION.md. This is not a production release or an OMO fine-tuned model.
