@@ -2,15 +2,31 @@ name: OMO validation
 on:
   pull_request:
   push:
-    branches: [main, 'feat/**', 'fix/**']
+    branches: [main]
   workflow_dispatch:
   workflow_call:
+    inputs:
+      strict_security:
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
   group: omo-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  secrets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
   checks:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -38,7 +54,7 @@ jobs:
       - run: uv run --no-sync python training/sft.py --dry-run
       - run: uv run --no-sync python scripts/check_release_contract.py
   native-container:
-    needs: checks
+    needs: [checks, secrets]
     strategy:
       fail-fast: false
       matrix:
@@ -70,6 +86,37 @@ jobs:
           docker image inspect omo-test:${{ matrix.arch }} --format '{{json .}}' > evidence/image-${{ matrix.arch }}.json
           docker save omo-test:${{ matrix.arch }} | gzip -n > /tmp/omo-image.tar.gz
           stat --format='%s' /tmp/omo-image.tar.gz > evidence/docker-save-gzip-bytes-${{ matrix.arch }}.txt
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('evidence')
+          for path in root.glob('image-*.json'):
+              data=json.loads(path.read_text())
+              size=root/('docker-save-gzip-bytes-'+data['Architecture']+'.txt')
+              print(json.dumps({'image_id':data['Id'],'architecture':data['Architecture'],'unpacked_bytes':data['Size'],'docker_save_gzip_bytes':int(size.read_text()),'registry_published':False}))
+          PY
+      - name: Container vulnerability report
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: omo-test:${{ matrix.arch }}
+          format: json
+          output: evidence/trivy-${{ matrix.arch }}.json
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+      - name: Report findings; block release-mode validation on any high/critical issue
+        env:
+          STRICT_SECURITY: ${{ inputs.strict_security }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          python - <<'PY'
+          import json,os,pathlib
+          data=json.loads(pathlib.Path('evidence/trivy-'+os.environ['ARCH']+'.json').read_text())
+          findings=[{'id':v['VulnerabilityID'],'package':v['PkgName'],'installed':v['InstalledVersion'],'severity':v['Severity'],'fixed':v.get('FixedVersion')} for r in data.get('Results',[]) for v in r.get('Vulnerabilities',[])]
+          print(json.dumps({'vulnerability_findings':findings}))
+          if findings:
+              print('::warning::Container vulnerability findings require review before release')
+              if os.environ['STRICT_SECURITY']=='true':raise SystemExit(1)
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: container-evidence-${{ matrix.arch }}

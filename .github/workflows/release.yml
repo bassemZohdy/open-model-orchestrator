@@ -35,6 +35,8 @@ jobs:
   validation:
     needs: authorize
     uses: ./.github/workflows/ci.yml
+    with:
+      strict_security: true
   model-validation:
     needs: authorize
     uses: ./.github/workflows/model-validation.yml
@@ -101,14 +103,11 @@ jobs:
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
           ARCH: ${{ matrix.arch }}
+          VERSION: ${{ inputs.version }}
         run: |
           docker pull "$IMAGE@$DIGEST"
           docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --memory 1536m --pids-limit 128 --cpus 4 --tmpfs /tmp:rw,noexec,nosuid,size=16m --entrypoint python "$IMAGE@$DIGEST" scripts/container_smoke.py
-          python - <<'PY'
-          import json,os,pathlib
-          report={'code_commit':os.environ['GITHUB_SHA'],'image':os.environ['IMAGE'],'digest':os.environ['DIGEST'],'architecture':os.environ['ARCH'],'model':json.loads(pathlib.Path('models/manifest.json').read_text()),'status':'candidate only; no stable alias advanced'}
-          pathlib.Path('candidate-'+os.environ['ARCH']+'.json').write_text(json.dumps(report,indent=2))
-          PY
+          python scripts/release_manifest.py --commit "$GITHUB_SHA" --image "$IMAGE" --digest "$DIGEST" --architecture "$ARCH" --version "$VERSION" --output "candidate-$ARCH.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: candidate-${{ matrix.arch }}

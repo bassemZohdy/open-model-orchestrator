@@ -117,10 +117,12 @@ async def test_cancellation_reaps_worker(sandbox):
     with pytest.raises(asyncio.CancelledError):
         await task
     for _ in range(100):
-        if not worker.is_running() or worker.status() == psutil.STATUS_ZOMBIE:
+        if not worker.is_running():
             break
         await asyncio.sleep(0.01)
-    assert not worker.is_running() or worker.status() == psutil.STATUS_ZOMBIE
+    # Require complete reaping, including zombies. is_running handles a process
+    # disappearing atomically; a separate status() read races successful reaping.
+    assert not worker.is_running()
     assert (await sandbox.execute("40+2", {})).value == 42
 
 

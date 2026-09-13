@@ -12,7 +12,8 @@ from pathlib import Path
 def main() -> None:
     binary = Path(sys.executable).parent / "monty"
     limit = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
-    os.closerange(3, min(int(limit), 1_048_576))
+    max_fd = 1_048_576 if limit == resource.RLIM_INFINITY else min(int(limit), 1_048_576)
+    os.closerange(3, max_fd)
     # Native fault diagnostics must not become prompt/guest-content logs.
     fd = os.open(os.devnull, os.O_WRONLY)
     os.dup2(fd, 2)

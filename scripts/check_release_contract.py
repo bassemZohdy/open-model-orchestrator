@@ -29,3 +29,5 @@ assert "github.ref == 'refs/heads/main'" in release["jobs"]["authorize"]["if"]
 assert "approved_commit" in events["workflow_dispatch"]["inputs"]
 assert "training" not in release["jobs"]
 print("Release event, dependency, action-pin and disabled-schedule contracts passed")
+
+assert release["jobs"]["validation"]["with"]["strict_security"] is True

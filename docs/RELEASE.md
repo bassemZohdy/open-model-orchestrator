@@ -2,7 +2,7 @@
 
 Verified GitHub account: `bassemZohdy`. Target repository: `bassemZohdy/open-model-orchestrator`, ID 1368293245, public, main branch. Initial checks returned 404; the owner then created the repository. OMO initialized main with a small README and developed on feat/bootstrap-v0.1. No other repository was changed or renamed.
 
-Hugging Face account: `BassemZohdy`. The connector reported read-repos/read-mcp/profile/openid/jobs scopes, with no publishing scope; its advertised token expiry was already past the environment clock even though identity/reads succeeded. Do not infer durable publishing authorization. Intended model target `BassemZohdy/open-model-orchestrator` and dataset target `BassemZohdy/open-model-orchestrator-dataset` were not found through the available read connection. Neither is created or published. The deployed base checkpoint is the upstream revision in models/manifest.json; it must not be published as a new OMO fine-tune.
+Hugging Face account: `BassemZohdy`. The connector reported read-repos/read-mcp/profile/openid/jobs scopes, with no publishing scope; identity was reverified on 2026-09-13 and the connector reported credential expiry 2026-09-13T18:03:41Z. Revalidate credentials before later operations. Intended model target `BassemZohdy/open-model-orchestrator` and dataset target `BassemZohdy/open-model-orchestrator-dataset` were not found through the available read connection. Neither is created or published. The deployed base checkpoint is the upstream revision in models/manifest.json; it must not be published as a new OMO fine-tune.
 
 Verified Docker Hub namespace: `bzohdy`; image target `bzohdy/open-model-orchestrator`. Actions login succeeded in run 34754068464/job 103715356976. Authentication is verified; push permission and image publication are not. Account artifact ID 10315684770, SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`.
 
@@ -10,10 +10,10 @@ The owner added Docker Hub Actions variables/secrets. Account preflight accepts 
 
 ## Workflows
 
-- OMO validation: PR/push checks, real Monty security contracts, strict typing, dataset/dry-run/release static checks; unpublished bundled container build and offline smoke on native ubuntu-24.04 AMD64 and ubuntu-24.04-arm ARM64.
+- OMO validation: PR/main-push checks, secret scanning, real Monty security contracts, strict typing, dataset/dry-run/release static checks; unpublished bundled container build and offline smoke on native ubuntu-24.04 AMD64 and ubuntu-24.04-arm ARM64. Container vulnerability reports are visible in normal CI; release-mode validation fails on any HIGH/CRITICAL finding.
 - Real model validation: trusted repository push/manual/reusable workflow, pinned weights, real model tests and local development evaluation. No paid provider calls.
 - Docker Hub account preflight: owner branch push when its workflow changes, or manual dispatch. Only credential existence/login and a non-secret identity artifact.
-- Approved application release: manual dispatch on main, explicit exact approved commit and version, validation plus real-model gates, release environment, native per-platform build with SBOM/provenance, candidate publication followed by digest-based offline smoke. No latest/stable alias advances. Stable multi-platform promotion and signature verification remain a release blocker.
+- Approved application release: manual dispatch on main, explicit exact approved commit and version, strict Python/container vulnerability gates plus real-model validation, release environment, native per-platform build with SBOM/provenance, candidate publication followed by digest-based offline smoke. The observed DiskCache advisory currently blocks candidate publication. No latest/stable alias advances. Stable multi-platform promotion and signature verification remain unimplemented.
 
 Third-party actions are pinned to full commits resolved from upstream version tags. Workflow permissions are read-only except external registry credentials in the publishing job. PR jobs receive no publishing secrets. There are no schedules, paid training jobs, pull_request_target or workflow_run chains. Configure the GitHub `release` environment with required reviewers and narrow branch access before dispatch; code cannot establish those repository settings through the available connector.
 
