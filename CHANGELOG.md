@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — reviewer workflow hardening
+
+- Consolidated Claude into one review-only PR workflow; removed the comment-driven assistant (manual retry remains available through Actions).
+- Added draft/fork/actor guards, a specific Codex bot allowance without bypassing write-access checks, immutable action refs, credential-free checkout, timeout/turn bounds and per-PR cancellation.
+- Added three workflow regression tests. Local verification: 94 non-model tests passed (12 model tests deselected), ruff check/format, mypy and the unchanged release contract passed. Remote review and CI are recorded on PR #3, not inferred from local checks.
+
 ## 0.1.0 development baseline — 2026-09-13
 
 - Embedded SmolLM2-360M Q8_0 through pinned llama-cpp-python, checksum validation, warmup and supervised cancellation.
