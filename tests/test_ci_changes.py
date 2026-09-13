@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from omo.ci_changes import changed_paths, classify, select
+from omo.ci_changes import _parse_bool, changed_paths, classify, select
 
 
 @pytest.mark.parametrize("path", ["README.md", "docs/API.md", "TODO.md", "notes/design.md"])
@@ -115,6 +115,16 @@ def test_invalid_revision_is_rejected_and_selection_fails_safe() -> None:
     assert select("0" * 40, "HEAD") == {"model": True, "container": True}
     assert select(None, None) == {"model": True, "container": True}
     assert select("base", "head", force_full=True) == {"model": True, "container": True}
+
+
+@pytest.mark.parametrize("value", ["", "false", "FALSE"])
+def test_empty_or_false_force_flag_does_not_force_validation(value: str) -> None:
+    assert _parse_bool(value) is False
+
+
+def test_invalid_force_flag_is_rejected() -> None:
+    with pytest.raises(Exception, match="expected true or false"):
+        _parse_bool("sometimes")
 
 
 def test_workflows_keep_lightweight_checks_and_force_release_validation() -> None:
