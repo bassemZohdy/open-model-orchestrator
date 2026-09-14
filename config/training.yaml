@@ -1,0 +1,21 @@
+schema_version: "1"
+enabled: false
+execution: dry-run-only
+base_model:
+  repository: HuggingFaceTB/SmolLM2-360M-Instruct
+  revision: 593b5a2e04c8f3e4ee880263f93e0bd2901ad47f
+dataset:
+  path: evaluation/seed.jsonl
+  required_source: omo-original-synthetic
+  required_license: Apache-2.0
+limits:
+  max_steps: 20
+  max_sequence_tokens: 512
+  max_runtime_minutes: 15
+  max_cost_usd: 0
+export:
+  format: safetensors
+  output_root: artifacts/training
+  quantizations: [Q8_0, Q4_K_M]
+  require_lineage: true
+  require_rollback_manifest: true
