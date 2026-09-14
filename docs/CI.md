@@ -32,6 +32,10 @@ deliberate, successful selection decision; the selection job itself is always
 run. Reusable release calls explicitly force both expensive suites and retain
 all publication and strict-security gates.
 
+The lightweight checks also validate the original dataset, outcome schema,
+training preparation contract and access-policy contract. These checks do not
+download third-party benchmarks, invoke live providers or enable training.
+
 ## Security, evaluation and publication contracts
 
 Native Trivy reports are passed through scripts/check_security_report.py.
