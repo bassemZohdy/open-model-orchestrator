@@ -1,0 +1,1 @@
+{"prompt_id":"omo-example-001","model_revision":"example-model-revision","policy_version":"omo-policy-1","response":"example-only","evaluation_method":"human-reviewed-example","passed":true,"latency_ms":1.0,"observed_cost_usd":0.0,"confidence":1.0,"timestamp":"1970-01-01T00:00:00Z"}

@@ -19,6 +19,9 @@ class Settings(StrictModel):
     model_path: str = "models/embedded.gguf"
     model_manifest: str = "models/manifest.json"
     registry_path: str = "config/registry.yaml"
+    access_policy_path: str | None = None
+    registry_reload_enabled: bool = False
+    registry_max_age_seconds: int = Field(default=86400, ge=60, le=604800)
     threads: int = Field(default=4, ge=1, le=8)
     context_tokens: int = Field(default=2048, ge=1024, le=4096)
     analysis_tokens: int = Field(default=768, ge=128, le=1024)
@@ -32,8 +35,12 @@ class Settings(StrictModel):
 
     @model_validator(mode="after")
     def safe_bind(self) -> Self:
-        if self.host not in {"127.0.0.1", "::1", "localhost"} and not self.api_key:
-            raise ValueError("non-loopback binding requires OMO_API_KEY")
+        if (
+            self.host not in {"127.0.0.1", "::1", "localhost"}
+            and not self.api_key
+            and not self.access_policy_path
+        ):
+            raise ValueError("non-loopback binding requires OMO_API_KEY or access policy")
         if self.api_key and len(self.api_key.get_secret_value()) < 24:
             raise ValueError("API key must contain at least 24 characters")
         return self
@@ -63,6 +70,7 @@ def load_settings(path: str | None = None, overrides: dict[str, Any] | None = No
             "model_path",
             "model_manifest",
             "registry_path",
+            "access_policy_path",
             "schema_version",
         }:
             values[name] = value

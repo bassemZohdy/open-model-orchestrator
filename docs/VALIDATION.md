@@ -1,6 +1,11 @@
 # Validation and delivery evidence
 
-Verified 2026-09-13. Implemented code and Docker changes are committed at `23a0b2881ec69f42d864d15440f8f06ef3969239` on `feat/bootstrap-v0.1`, [draft PR #1](https://github.com/bassemZohdy/open-model-orchestrator/pull/1). Later documentation commits do not change that implementation. No merge was performed.
+This document retains the historical baseline evidence from 2026-09-13. The
+implementation baseline and CI cleanup are now merged into `main`; current
+remaining work and the newer offline contracts are tracked in [TODO](../TODO.md),
+[training](TRAINING.md), [dataset](DATASET.md) and [operations](OPERATIONS.md).
+The evidence below is not a claim that paid training, live-provider evaluation
+or publication has been performed.
 
 ## Implemented and tested
 
@@ -45,7 +50,7 @@ Development tests may pass while security reports contain release-blocking findi
 
 | Destination | Verified state |
 |---|---|
-| GitHub `bassemZohdy/open-model-orchestrator` | Source branch and draft PR published; main unchanged after initialization; no merge or release |
+| GitHub `bassemZohdy/open-model-orchestrator` | Baseline and CI cleanup are merged into `main`; no model publication or stable release |
 | Docker Hub `bzohdy/open-model-orchestrator` | Login verified in run `34754068464`; artifact `10315684770`, archive SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`. Push permission untested; no candidate/stable image published by this work |
 | HF `BassemZohdy/open-model-orchestrator` | Intended target; not created/published. Connected account has no publishing scope |
 | HF `BassemZohdy/open-model-orchestrator-dataset` | Intended target; not created/published. Original data is committed in GitHub |

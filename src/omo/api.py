@@ -16,6 +16,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from omo.access import AccessStore, BudgetLedger, Caller
 from omo.config import Settings
 from omo.contracts import ChatRequest, Decision, OmoError
 from omo.inference import LlamaModel
@@ -28,8 +29,10 @@ LOGGER = logging.getLogger("omo.operations")
 
 
 class Guard:
-    def __init__(self, app: ASGIApp, settings: Settings) -> None:
-        self.app, self.settings = app, settings
+    def __init__(
+        self, app: ASGIApp, settings: Settings, access_store: AccessStore | None = None
+    ) -> None:
+        self.app, self.settings, self.access_store = app, settings, access_store
         self.active = 0
         self.recent: deque[float] = deque()
 
@@ -39,7 +42,18 @@ class Guard:
             return
         headers = dict(scope.get("headers", []))
         expected = self.settings.api_key
-        if expected:
+        caller: Caller | None = None
+        if self.access_store:
+            prefix = b"Bearer "
+            authorization = headers.get(b"authorization", b"")
+            token = (
+                authorization[len(prefix) :].decode(errors="ignore")
+                if authorization.startswith(prefix)
+                else ""
+            )
+            caller = self.access_store.authenticate(token)
+            ok = caller is not None
+        elif expected:
             ok = hmac.compare_digest(
                 headers.get(b"authorization", b""),
                 ("Bearer " + expected.get_secret_value()).encode(),
@@ -92,8 +106,10 @@ class Guard:
                 return await receive()
 
             scope.setdefault("state", {})["caller"] = (
-                "configured-api-key" if expected else "loopback-dev"
+                caller.id if caller else ("configured-api-key" if expected else "loopback-dev")
             )
+            if caller:
+                scope["state"]["caller_policy"] = caller
             scope["state"]["request_id"] = uuid.uuid4().hex
             await self.app(scope, bounded_receive, send)
         except TimeoutError:
@@ -134,6 +150,10 @@ async def cancellable(
 def create_app(settings: Settings | None = None, service: Orchestrator | None = None) -> FastAPI:
     settings = settings or Settings()
     counters: Counter[str] = Counter()
+    access_store = (
+        AccessStore.read(settings.access_policy_path) if settings.access_policy_path else None
+    )
+    budget_ledger = BudgetLedger()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -145,13 +165,17 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
         provider = OpenAIProvider()
         try:
             await model.start()
-            registry = RegistryStore(RegistryStore.read(settings.registry_path))
+            registry = RegistryStore(
+                RegistryStore.read(settings.registry_path), source_path=settings.registry_path
+            )
             async with MontySandbox(settings.sandbox_enabled) as sandbox:
                 if settings.sandbox_enabled:
                     smoke = await sandbox.execute("1 + 1", {})
                     if smoke.value != 2:
                         raise RuntimeError("sandbox startup check failed")
-                app.state.service = Orchestrator(settings, model, registry, sandbox, provider)
+                app.state.service = Orchestrator(
+                    settings, model, registry, sandbox, provider, budget_ledger
+                )
                 yield
         finally:
             await provider.close()
@@ -165,7 +189,7 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
         redoc_url=None,
         openapi_url=None,
     )
-    app.add_middleware(Guard, settings=settings)
+    app.add_middleware(Guard, settings=settings, access_store=access_store)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
@@ -195,6 +219,29 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
             {"status": "ready" if ok else "not_ready"}, status_code=200 if ok else 503
         )
 
+    @app.get("/admin/registry/status")
+    async def registry_status(request: Request) -> dict[str, object]:
+        active: Orchestrator = request.app.state.service
+        return active.registry.status(settings.registry_max_age_seconds)
+
+    @app.post("/admin/registry/reload")
+    async def registry_reload(request: Request) -> JSONResponse:
+        if not settings.registry_reload_enabled:
+            return JSONResponse({"error": {"code": "registry_reload_disabled"}}, status_code=404)
+        caller = getattr(request.state, "caller_policy", None)
+        if access_store is not None and (caller is None or caller.role != "admin"):
+            return JSONResponse({"error": {"code": "admin_required"}}, status_code=403)
+        active: Orchestrator = request.app.state.service
+        if not active.registry.try_reload(settings.registry_path):
+            return JSONResponse(
+                {
+                    "error": {"code": "registry_reload_failed"},
+                    "registry": active.registry.status(settings.registry_max_age_seconds),
+                },
+                status_code=422,
+            )
+        return JSONResponse(active.registry.status(settings.registry_max_age_seconds))
+
     @app.get("/v1/models")
     async def models(request: Request) -> dict[str, Any]:
         return {"object": "list", "data": [{"id": "omo", "object": "model", "owned_by": "local"}]}
@@ -207,15 +254,19 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
     async def route(body: ChatRequest, request: Request) -> dict[str, Any]:
         active: Orchestrator = request.app.state.service
         snapshot = active.registry.snapshot
+        caller = getattr(request.state, "caller_policy", None)
         decision: Decision = await cancellable(
-            request, lambda: active.route(body, snapshot), settings.deadline_seconds
+            request, lambda: active.route(body, snapshot, caller), settings.deadline_seconds
         )
         return decision.model_dump(exclude={"helper"})
 
     @app.post("/v1/chat/completions")
     async def chat(body: ChatRequest, request: Request) -> Any:
         active: Orchestrator = request.app.state.service
-        result = await cancellable(request, lambda: active.chat(body), settings.deadline_seconds)
+        caller = getattr(request.state, "caller_policy", None)
+        result = await cancellable(
+            request, lambda: active.chat(body, caller), settings.deadline_seconds
+        )
         request_id = request.state.request_id
         result.update(
             {

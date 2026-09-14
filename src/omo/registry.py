@@ -4,6 +4,7 @@ import hashlib
 import ipaddress
 import json
 import re
+import time
 from pathlib import Path
 from typing import Literal, Self
 from urllib.parse import urlsplit
@@ -32,6 +33,7 @@ class ModelEntry(StrictModel):
     available: bool = False
     supports_tools: bool = False
     supports_structured_output: bool = False
+    tokenizer: Literal["utf8-byte-upper-bound"] = "utf8-byte-upper-bound"
     metadata_verified_at: str | None = None
     provenance: str = "administrator configured; quality unmeasured"
     evaluated_quality: float | None = Field(default=None, ge=0, le=1)
@@ -76,8 +78,12 @@ class Registry(StrictModel):
 
 
 class RegistryStore:
-    def __init__(self, snapshot: Registry) -> None:
+    def __init__(self, snapshot: Registry, source_path: str | None = None) -> None:
         self.snapshot = snapshot
+        self.source_path = source_path
+        self.loaded_at = time.time()
+        self.last_reload_error: str | None = None
+        self.last_reload_at = self.loaded_at
 
     @staticmethod
     def read(path: str) -> Registry:
@@ -88,5 +94,37 @@ class RegistryStore:
         return Registry.model_validate_json(json.dumps(yaml.safe_load(p.read_text())))
 
     def reload(self, path: str) -> None:
-        replacement = self.read(path)
+        try:
+            replacement = self.read(path)
+        except (OSError, TypeError, ValueError, yaml.YAMLError) as exc:
+            self.last_reload_at = time.time()
+            self.last_reload_error = type(exc).__name__
+            raise
         self.snapshot = replacement  # Complete validated immutable snapshot, one atomic reference.
+        self.source_path = path
+        self.loaded_at = time.time()
+        self.last_reload_at = self.loaded_at
+        self.last_reload_error = None
+
+    def try_reload(self, path: str) -> bool:
+        try:
+            self.reload(path)
+        except (OSError, TypeError, ValueError, yaml.YAMLError):
+            return False
+        return True
+
+    def refresh_if_stale(self, path: str, max_age_seconds: int, now: float | None = None) -> bool:
+        if self.status(max_age_seconds, now)["fresh"]:
+            return False
+        return self.try_reload(path)
+
+    def status(self, max_age_seconds: int, now: float | None = None) -> dict[str, object]:
+        current = time.time() if now is None else now
+        age = max(0.0, current - self.loaded_at)
+        return {
+            "version": self.snapshot.version,
+            "digest": self.snapshot.digest,
+            "age_seconds": round(age, 3),
+            "fresh": age <= max_age_seconds,
+            "last_reload_error": self.last_reload_error,
+        }

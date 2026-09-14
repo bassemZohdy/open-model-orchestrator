@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlsplit
+
 from omo.config import Settings
 from omo.contracts import ChatRequest, Decision, Proposal
 from omo.helpers import fast_helper
@@ -31,17 +33,33 @@ def estimated_input_upper_bound(request: ChatRequest) -> int:
     return sum(len(m.content.encode()) + 32 for m in request.messages) + 64
 
 
+def estimated_input_tokens(entry: ModelEntry, request: ChatRequest) -> int | None:
+    if entry.tokenizer != "utf8-byte-upper-bound":
+        return None
+    return estimated_input_upper_bound(request)
+
+
 def estimated_cost(entry: ModelEntry, request: ChatRequest) -> float | None:
-    if entry.input_usd_per_million is None or entry.output_usd_per_million is None:
+    input_tokens = estimated_input_tokens(entry, request)
+    if (
+        input_tokens is None
+        or entry.input_usd_per_million is None
+        or entry.output_usd_per_million is None
+    ):
         return None
     return (
-        estimated_input_upper_bound(request) * entry.input_usd_per_million
+        input_tokens * entry.input_usd_per_million
         + request.max_tokens * entry.output_usd_per_million
     ) / 1_000_000
 
 
 def eligible_models(
-    request: ChatRequest, proposal: Proposal, registry: Registry, settings: Settings
+    request: ChatRequest,
+    proposal: Proposal,
+    registry: Registry,
+    settings: Settings,
+    allowed_retention: tuple[str, ...] | None = None,
+    allowed_hosts: tuple[str, ...] | None = None,
 ) -> list[ModelEntry]:
     if request.omo.local_only or not settings.external_enabled:
         return []
@@ -54,7 +72,12 @@ def eligible_models(
     for m in registry.models:
         if not m.enabled or not m.available or not required.issubset(m.capabilities):
             continue
-        if estimated_input_upper_bound(request) + request.max_tokens > m.context_tokens:
+        if allowed_retention is not None and m.retention not in allowed_retention:
+            continue
+        if allowed_hosts is not None and urlsplit(m.base_url).hostname not in allowed_hosts:
+            continue
+        input_tokens = estimated_input_tokens(m, request)
+        if input_tokens is None or input_tokens + request.max_tokens > m.context_tokens:
             continue
         if request.max_tokens > m.max_output_tokens:
             continue
@@ -66,7 +89,12 @@ def eligible_models(
 
 
 def decide(
-    request: ChatRequest, registry: Registry, settings: Settings, proposal: Proposal | None = None
+    request: ChatRequest,
+    registry: Registry,
+    settings: Settings,
+    proposal: Proposal | None = None,
+    allowed_retention: tuple[str, ...] | None = None,
+    allowed_hosts: tuple[str, ...] | None = None,
 ) -> Decision:
     version = registry.version + ":" + registry.digest
     if request.omo.required_capability == "current_information":
@@ -121,7 +149,14 @@ def decide(
             helper=proposal.helper,
             registry_version=version,
         )
-    eligible = eligible_models(request, proposal, registry, settings)
+    eligible = eligible_models(
+        request,
+        proposal,
+        registry,
+        settings,
+        allowed_retention=allowed_retention,
+        allowed_hosts=allowed_hosts,
+    )
     if eligible:
         return Decision(
             action="external_model",

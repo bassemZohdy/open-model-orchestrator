@@ -14,3 +14,8 @@ images or move registry aliases. Those actions require owner-controlled
 publishing/signing credentials and the protected release environment. The
 upstream SmolLM2 bytes must remain identified as upstream weights, not an OMO
 fine-tune.
+
+Training preparation is separately lineage-bound in
+[`config/training.yaml`](../config/training.yaml). It remains dry-run-only and
+cannot create a publishable model artifact until the training, export,
+quantization, evaluation and signing gates are independently approved.

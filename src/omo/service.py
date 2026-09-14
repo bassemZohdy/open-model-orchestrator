@@ -6,6 +6,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from omo.access import BudgetLedger, Caller
 from omo.config import Settings
 from omo.contracts import Arithmetic, ChatRequest, Decision, OmoError, Proposal
 from omo.helpers import arithmetic
@@ -56,17 +57,49 @@ class Orchestrator:
         registry: RegistryStore,
         sandbox: SandboxExecutor,
         provider: OpenAIProvider,
+        budget_ledger: BudgetLedger | None = None,
     ) -> None:
         self.settings, self.model, self.registry = settings, model, registry
         self.sandbox, self.provider = sandbox, provider
+        self.budget_ledger = budget_ledger
 
-    async def route(self, request: ChatRequest, snapshot: Registry) -> Decision:
-        first = decide(request, snapshot, self.settings)
+    async def route(
+        self, request: ChatRequest, snapshot: Registry, caller: Caller | None = None
+    ) -> Decision:
+        policy_request = request
+        allowed_retention = None
+        allowed_hosts = None
+        if caller is not None:
+            policy_request = request.model_copy(
+                update={
+                    "omo": request.omo.model_copy(
+                        update={"max_cost_usd": min(request.omo.max_cost_usd, caller.max_cost_usd)}
+                    )
+                }
+            )
+            allowed_retention = caller.allowed_retention
+            allowed_hosts = caller.allowed_hosts
+        first = decide(
+            policy_request,
+            snapshot,
+            self.settings,
+            allowed_retention=allowed_retention,
+            allowed_hosts=allowed_hosts,
+        )
         if first.reason != "analysis_needed":
             return first
-        if request.omo.action == "external_model":
-            proposal = Proposal(action="external_model", capability=request.omo.required_capability)
-            return decide(request, snapshot, self.settings, proposal)
+        if policy_request.omo.action == "external_model":
+            proposal = Proposal(
+                action="external_model", capability=policy_request.omo.required_capability
+            )
+            return decide(
+                policy_request,
+                snapshot,
+                self.settings,
+                proposal,
+                allowed_retention=allowed_retention,
+                allowed_hosts=allowed_hosts,
+            )
         messages = [
             {"role": "system", "content": ANALYSIS_INSTRUCTION},
             {"role": "user", "content": json.dumps([m.model_dump() for m in request.messages])},
@@ -89,12 +122,19 @@ class Orchestrator:
                 reason="invalid_model_proposal",
                 registry_version=snapshot.version + ":" + snapshot.digest,
             )
-        return decide(request, snapshot, self.settings, proposal)
+        return decide(
+            policy_request,
+            snapshot,
+            self.settings,
+            proposal,
+            allowed_retention=allowed_retention,
+            allowed_hosts=allowed_hosts,
+        )
 
-    async def chat(self, request: ChatRequest) -> dict[str, Any]:
+    async def chat(self, request: ChatRequest, caller: Caller | None = None) -> dict[str, Any]:
         started = time.perf_counter()
         snapshot = self.registry.snapshot
-        decision = await self.route(request, snapshot)
+        decision = await self.route(request, snapshot, caller)
         routed = time.perf_counter()
         usage = None
         attempts = 0
@@ -153,6 +193,14 @@ class Orchestrator:
             )
         elif decision.action == "external_model":
             entry = next(m for m in snapshot.models if m.id == decision.target)
+            estimated = estimated_cost(entry, request)
+            if (
+                caller is not None
+                and self.budget_ledger is not None
+                and estimated is not None
+                and not self.budget_ledger.reserve(caller, estimated * 2)
+            ):
+                raise OmoError("caller_budget_exceeded", 429)
             output = (
                 await self.provider.collect_stream(entry, request)
                 if request.stream
@@ -160,7 +208,6 @@ class Orchestrator:
             )
             text, usage, attempts = output["text"], output["usage"], output["attempts"]
             actual_model, executor = entry.id, "external_model"
-            estimated = estimated_cost(entry, request)
         elif decision.action == "clarify":
             text = "Please provide the task details, or use the documented typed helper arguments."
             status = "unsupported"

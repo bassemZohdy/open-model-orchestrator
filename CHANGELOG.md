@@ -2,7 +2,20 @@
 
 ## Unreleased
 
-- Bound automatic Claude review instructions to the triggering pull-request head SHA and require the review comment to identify that revision, making stale review evidence detectable after synchronization.
+- Added offline OMO-008 training preparation with locked model/dataset lineage,
+  export/quantization targets and rollback requirements; training execution,
+  export and promotion remain disabled.
+- Expanded the original synthetic evaluation corpus to 30 records, added
+  family/content deduplication, bounded outcome validation and selective
+  risk/coverage observations without importing third-party benchmark data.
+- Added opt-in hash-based caller policies with tenant/role identity, exact
+  egress host allowlists, retention filtering and bounded in-memory daily budget
+  reservations; raw bearer keys and prompt content are never stored.
+- Added offline registry freshness/status administration, authenticated
+  last-known-good reload and a declared tokenizer strategy for external count
+  estimates. Request-time discovery and downloads remain disabled.
+- Verified the issue-first Codex/Claude workflow on reviewed PR #10; Claude
+  reported no findings and the PR passed all required CI jobs before merge.
 - Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
 - Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
 - Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.

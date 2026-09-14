@@ -35,7 +35,7 @@ curl -s http://127.0.0.1:8000/v1/chat/completions \
   -d '{"messages":[{"role":"user","content":"Square the even numbers"}],"omo":{"action":"helper","helper":{"id":"even_squares","values":[1,2,3,4]}}}'
 ```
 
-Other locally eligible questions are `What is a noun?`, `What is photosynthesis?`, and `What is the opposite of hot?`. Variants, extra conversation history, Arabic, high-stakes and current-fact requests are outside this local envelope. The generated answer is validated; failure produces an explicit error, never a fabricated fallback. This exact envelope is a conservative starting point, not useful general coverage.
+Other locally eligible questions are `What is a noun?`, `What is photosynthesis?`, and `What is the opposite of hot?`. Variants, extra conversation history, Arabic, high-stakes and current-fact requests are outside this local envelope. The generated answer is validated; failure produces an explicit error, never a fabricated fallback. This exact envelope is a conservative starting point, not useful general coverage. Optional caller policies and offline registry administration are documented in [operations](docs/OPERATIONS.md).
 
 ## Docker
 
@@ -80,9 +80,11 @@ uv run --no-sync pytest -m model -q
 uv run --no-sync python evaluation/run.py --output evaluation/results-local/evaluation.json
 uv run --no-sync python scripts/check_evaluation_contract.py
 uv run --no-sync python scripts/check_publication_contract.py
+uv run --no-sync python scripts/check_training_contract.py
+uv run --no-sync python scripts/check_access_contract.py
 uv run --no-sync python training/sft.py --dry-run
 ```
 
-The model tests require real weights and fail if absent. Normal contract tests use a fake external provider and real Monty workers. No paid inference or Jobs are used. See [evidence](docs/VALIDATION.md), [CI behavior](docs/CI.md), [API/configuration](docs/API.md), [decisions](docs/adr/001-baseline.md), [security](docs/SECURITY_MODEL.md), [security review](docs/SECURITY_REVIEW.md), [publication gates](docs/PUBLISHING.md), [release runbook](docs/RELEASE.md), and [prioritized backlog](TODO.md).
+The model tests require real weights and fail if absent. Normal contract tests use a fake external provider and real Monty workers. No paid inference or Jobs are used. See [evidence](docs/VALIDATION.md), [CI behavior](docs/CI.md), [operations](docs/OPERATIONS.md), [training](docs/TRAINING.md), [dataset](docs/DATASET.md), [API/configuration](docs/API.md), [decisions](docs/adr/001-baseline.md), [security](docs/SECURITY_MODEL.md), [security review](docs/SECURITY_REVIEW.md), [publication gates](docs/PUBLISHING.md), [release runbook](docs/RELEASE.md), and [prioritized backlog](TODO.md).
 
 Application code: Apache-2.0. Weights, datasets and dependencies retain their separate licenses. The bundled checkpoint is an upstream SmolLM2 model, **not an OMO fine-tune**.
