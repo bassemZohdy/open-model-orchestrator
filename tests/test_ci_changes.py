@@ -25,6 +25,7 @@ def test_documentation_only_changes_skip_expensive_suites(path: str) -> None:
         ("pyproject.toml", {"model": True, "container": True}),
         ("uv.lock", {"model": True, "container": True}),
         ("training/sft.py", {"model": True, "container": False}),
+        ("config/training.yaml", {"model": True, "container": False}),
         ("scripts/check_evaluation_contract.py", {"model": True, "container": False}),
         ("scripts/check_security_report.py", {"model": False, "container": True}),
         ("scripts/check_publication_contract.py", {"model": False, "container": False}),
