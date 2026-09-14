@@ -22,33 +22,17 @@ ANALYSIS_SCHEMA = {
         "action": {"type": "string", "enum": ["external_model", "helper", "clarify"]},
         "capability": {"type": "string", "enum": ["text", "coding", "current_information"]},
         "helper": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "additionalProperties": False,
-                    "properties": {
-                        "id": {"const": "decimal"},
-                        "operation": {"enum": ["add", "subtract", "multiply", "divide"]},
-                        "a": {"pattern": r"^-?\d{1,12}(\.\d{1,8})?$"},
-                        "b": {"pattern": r"^-?\d{1,12}(\.\d{1,8})?$"},
-                        "unit": {"enum": ["", "AED", "USD", "kg", "m", "s"]},
-                    },
-                    "required": ["id", "operation", "a", "b"],
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": False,
-                    "properties": {
-                        "id": {"const": "even_squares"},
-                        "values": {
-                            "type": "array",
-                            "items": {"type": "integer", "minimum": -10000, "maximum": 10000},
-                            "maxItems": 128,
-                        },
-                    },
-                    "required": ["id", "values"],
-                },
-            ]
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "id": {"enum": ["decimal", "even_squares"]},
+                "operation": {"enum": ["add", "subtract", "multiply", "divide"]},
+                "a": {"type": "string"},
+                "b": {"type": "string"},
+                "unit": {"enum": ["", "AED", "USD", "kg", "m", "s"]},
+                "values": {"type": "array", "items": {"type": "integer"}},
+            },
+            "required": ["id"],
         },
     },
     "required": ["action", "capability"],
