@@ -75,7 +75,10 @@ jobs:
       - run: uv run --no-sync mypy
       - run: uv run --no-sync pytest -m 'not model' -q
       - run: uv run --no-sync python evaluation/dataset.py --validate evaluation/seed.jsonl
+      - run: uv run --no-sync python evaluation/dataset.py --validate-outcomes evaluation/outcomes.example.jsonl
       - run: uv run --no-sync python scripts/check_evaluation_contract.py
+      - run: uv run --no-sync python scripts/check_training_contract.py
+      - run: uv run --no-sync python scripts/check_access_contract.py
       - run: uv run --no-sync python scripts/check_publication_contract.py
       - run: uv run --no-sync python scripts/check_release_contract.py
   real-model:
