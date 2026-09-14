@@ -22,7 +22,7 @@ def test_worker_protocol_accepts_only_bounded_messages():
         is None
     )
     assert (
-        _parse_request(valid_request(messages=[{"role": "user", "content": "x" * 12001}])) is None
+        _parse_request(valid_request(messages=[{"role": "user", "content": "x" * 60001}])) is None
     )
 
 
