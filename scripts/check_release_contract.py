@@ -21,7 +21,6 @@ events = release.get("on", release.get(True))
 assert set(events) == {"workflow_dispatch"}
 assert release["jobs"]["publish-platform"]["needs"] == [
     "validation",
-    "model-validation",
     "security-audit",
 ]
 assert release["jobs"]["publish-platform"]["environment"] == "release"

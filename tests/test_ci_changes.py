@@ -24,7 +24,13 @@ def test_documentation_only_changes_skip_expensive_suites(path: str) -> None:
         ("src/omo/service.py", {"model": True, "container": True}),
         ("pyproject.toml", {"model": True, "container": True}),
         ("uv.lock", {"model": True, "container": True}),
-        (".github/workflows/model-validation.yml", {"model": True, "container": True}),
+        ("training/sft.py", {"model": True, "container": False}),
+        ("scripts/check_evaluation_contract.py", {"model": True, "container": False}),
+        ("scripts/check_security_report.py", {"model": False, "container": True}),
+        ("scripts/check_publication_contract.py", {"model": False, "container": False}),
+        ("scripts/check_release_contract.py", {"model": False, "container": False}),
+        ("scripts/promote_release.py", {"model": False, "container": False}),
+        ("config/publication.yaml", {"model": False, "container": False}),
         (".github/workflows/ci.yml", {"model": True, "container": True}),
     ],
 )
@@ -130,26 +136,25 @@ def test_invalid_force_flag_is_rejected() -> None:
 
 def test_workflows_keep_lightweight_checks_and_force_release_validation() -> None:
     ci = yaml.safe_load(Path(".github/workflows/ci.yml").read_text())
-    model = yaml.safe_load(Path(".github/workflows/model-validation.yml").read_text())
     release = yaml.safe_load(Path(".github/workflows/release.yml").read_text())
     ci_on = ci.get("on", ci.get(True))
-    model_on = model.get("on", model.get(True))
     release_on = release.get("on", release.get(True))
 
     assert "pull_request" in ci_on and "workflow_call" in ci_on
     assert ci_on["workflow_dispatch"]["inputs"]["strict_security"]["type"] == "boolean"
-    assert model_on["push"] is None or "branches" not in model_on["push"]
-    assert "pull_request" in model_on and "workflow_call" in model_on
-    assert model_on["workflow_dispatch"]["inputs"]["force"]["default"] is True
     assert "jobs:\n  changes:" in Path(".github/workflows/ci.yml").read_text()
+    assert (
+        "model: ${{ steps.select.outputs.model }}" in Path(".github/workflows/ci.yml").read_text()
+    )
+    assert "\n  real-model:" in Path(".github/workflows/ci.yml").read_text()
     assert "needs: [changes, checks, secrets]" in Path(".github/workflows/ci.yml").read_text()
     assert (
         "github.event.pull_request.head.sha || github.sha"
         in Path(".github/workflows/ci.yml").read_text()
     )
-    assert (
-        '--force-full "$FORCE_FULL"' in Path(".github/workflows/model-validation.yml").read_text()
-    )
-    assert "force: true" in Path(".github/workflows/release.yml").read_text()
     assert "strict_security: true" in Path(".github/workflows/release.yml").read_text()
+    assert "model-validation.yml" not in Path(".github/workflows/release.yml").read_text()
+    ci_text = Path(".github/workflows/ci.yml").read_text()
+    assert "uv lock --check" not in ci_text
+    assert "python training/sft.py --dry-run" in ci_text
     assert set(release_on) == {"workflow_dispatch"}

@@ -37,11 +37,6 @@ jobs:
     uses: ./.github/workflows/ci.yml
     with:
       strict_security: true
-  model-validation:
-    needs: authorize
-    uses: ./.github/workflows/model-validation.yml
-    with:
-      force: true
   security-audit:
     needs: authorize
     runs-on: ubuntu-24.04
@@ -58,7 +53,7 @@ jobs:
       - name: Strict dependency audit; known DiskCache finding blocks publication
         run: uvx --from pip-audit==2.10.1 pip-audit -r /tmp/runtime-requirements.txt --no-deps --disable-pip
   publish-platform:
-    needs: [validation, model-validation, security-audit]
+    needs: [validation, security-audit]
     environment: release
     strategy:
       fail-fast: false

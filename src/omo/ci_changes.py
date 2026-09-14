@@ -35,6 +35,7 @@ MODEL_PATHS: Final = (
     "scripts/download_model.py",
     "src/",
     "tests/test_real_model.py",
+    "training/",
     "uv.lock",
 )
 CONTAINER_PATHS: Final = (
@@ -48,9 +49,29 @@ CONTAINER_PATHS: Final = (
     "uv.lock",
 )
 DEPENDENCY_PATHS: Final = ("build-constraints.txt", "pyproject.toml")
+MODEL_ONLY_FILES: Final = frozenset(
+    {
+        "scripts/check_evaluation_contract.py",
+    }
+)
+CONTAINER_ONLY_FILES: Final = frozenset(
+    {
+        "scripts/check_security_report.py",
+    }
+)
+CI_ONLY_FILES: Final = frozenset(
+    {
+        "config/publication.yaml",
+        "scripts/check_publication_contract.py",
+        "scripts/check_release_contract.py",
+        "scripts/promote_release.py",
+        "scripts/release_manifest.py",
+        ".github/workflows/account-preflight.yml",
+        ".github/workflows/claude-code-review.yml",
+    }
+)
 RELEVANT_WORKFLOWS: Final = (
     ".github/workflows/ci.yml",
-    ".github/workflows/model-validation.yml",
     ".github/workflows/release.yml",
 )
 
@@ -77,6 +98,13 @@ def _matches(path: str, patterns: tuple[str, ...]) -> bool:
 def _classify_path(path: str) -> dict[str, bool] | None:
     """Classify one path; ``None`` means it is unknown and must fail closed."""
     normalised = _normalise_path(path)
+
+    if normalised in MODEL_ONLY_FILES:
+        return {"model": True, "container": False}
+    if normalised in CONTAINER_ONLY_FILES:
+        return {"model": False, "container": True}
+    if normalised in CI_ONLY_FILES:
+        return {"model": False, "container": False}
 
     # A dependency/build input can affect both the model and image jobs.
     if _matches(normalised, DEPENDENCY_PATHS):
