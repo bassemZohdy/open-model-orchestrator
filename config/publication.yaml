@@ -1,0 +1,20 @@
+schema_version: "1"
+enabled: false
+publisher_authority:
+  required: true
+  trusted_publisher: true
+  runtime_credentials_separate: true
+targets:
+  model:
+    repository: BassemZohdy/open-model-orchestrator
+    kind: model
+    source_repository: HuggingFaceTB/SmolLM2-360M-Instruct-GGUF
+    source_revision: 593b5a2e04c8f3e4ee880263f93e0bd2901ad47f
+    fine_tuned_by_omo: false
+    license: Apache-2.0
+  dataset:
+    repository: BassemZohdy/open-model-orchestrator-dataset
+    kind: dataset
+    source: evaluation/seed.jsonl
+    license: Apache-2.0
+    immutable_revisions_required: true
