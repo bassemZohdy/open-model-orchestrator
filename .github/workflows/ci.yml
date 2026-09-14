@@ -75,6 +75,8 @@ jobs:
       - run: uv run --no-sync mypy
       - run: uv run --no-sync pytest -m 'not model' -q
       - run: uv run --no-sync python evaluation/dataset.py --validate evaluation/seed.jsonl
+      - run: uv run --no-sync python scripts/check_evaluation_contract.py
+      - run: uv run --no-sync python scripts/check_publication_contract.py
       - run: uv run --no-sync python training/sft.py --dry-run
       - run: uv run --no-sync python scripts/check_release_contract.py
   native-container:
@@ -133,15 +135,11 @@ jobs:
           STRICT_SECURITY: ${{ inputs.strict_security }}
           ARCH: ${{ matrix.arch }}
         run: |
-          python - <<'PY'
-          import json,os,pathlib
-          data=json.loads(pathlib.Path('evidence/trivy-'+os.environ['ARCH']+'.json').read_text())
-          findings=[{'id':v['VulnerabilityID'],'package':v['PkgName'],'installed':v['InstalledVersion'],'severity':v['Severity'],'fixed':v.get('FixedVersion')} for r in data.get('Results',[]) for v in r.get('Vulnerabilities',[])]
-          print(json.dumps({'vulnerability_findings':findings}))
-          if findings:
-              print('::warning::Container vulnerability findings require review before release')
-              if os.environ['STRICT_SECURITY']=='true':raise SystemExit(1)
-          PY
+          if [ "$STRICT_SECURITY" = "true" ]; then
+            python scripts/check_security_report.py --report "evidence/trivy-$ARCH.json" --strict
+          else
+            python scripts/check_security_report.py --report "evidence/trivy-$ARCH.json"
+          fi
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: container-evidence-${{ matrix.arch }}
