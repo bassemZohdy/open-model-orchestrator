@@ -1,0 +1,75 @@
+{
+  "schema_version": "1",
+  "dataset": "evaluation/seed.jsonl",
+  "candidates": [
+    {
+      "id": "smollm2-360m-q8",
+      "kind": "local-model",
+      "source": "HuggingFaceTB/SmolLM2-360M-Instruct-GGUF",
+      "license": "Apache-2.0",
+      "status": "measured-development-only",
+      "quantization": "Q8_0"
+    },
+    {
+      "id": "granite-4.0-350m",
+      "kind": "local-model",
+      "source": "ibm-granite/granite-4.0-350m",
+      "license": "Apache-2.0",
+      "status": "unmeasured",
+      "quantization": "native-reference"
+    },
+    {
+      "id": "lfm2.5-350m",
+      "kind": "local-model",
+      "source": "LiquidAI/LFM2.5-350M",
+      "license": "LFM Open License",
+      "status": "license-review-required",
+      "quantization": "native-reference"
+    },
+    {
+      "id": "qwen3-0.6b",
+      "kind": "local-model",
+      "source": "Qwen/Qwen3-0.6B",
+      "license": "Apache-2.0",
+      "status": "unmeasured",
+      "quantization": "native-reference"
+    },
+    {
+      "id": "transformers-cpu-reference",
+      "kind": "runtime-reference",
+      "source": "Transformers CPU reference implementation",
+      "license": "runtime-dependent",
+      "status": "unmeasured",
+      "quantization": "native-reference"
+    }
+  ],
+  "gates": {
+    "policy_accuracy": {
+      "split": "validation",
+      "minimum": 1.0
+    },
+    "protected_quality": {
+      "split": "test",
+      "minimum": 1.0,
+      "requires_human_review": true
+    },
+    "incorrect_local_answers": {
+      "split": "test",
+      "maximum": 0
+    },
+    "p95_latency_ms": {
+      "split": "development",
+      "maximum": 1000
+    },
+    "peak_tree_rss_bytes": {
+      "split": "development",
+      "maximum": 1610612736
+    }
+  },
+  "requirements": [
+    "Run every candidate on the same seed revision and CPU envelope.",
+    "Run Q4 and Q8 only after the unquantized/reference comparison is recorded.",
+    "Do not promote a candidate from unmeasured or license-review-required status.",
+    "A keyword pass does not waive human review for incorrect local answers."
+  ]
+}
