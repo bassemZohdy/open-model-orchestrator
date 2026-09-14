@@ -27,6 +27,26 @@ deliberate, successful selection decision; the selection job itself is always
 run. Release workflows explicitly force both expensive suites and retain all
 publication and strict-security gates.
 
+## Security, evaluation and publication contracts
+
+Native Trivy reports are passed through scripts/check_security_report.py.
+Normal CI preserves every HIGH/CRITICAL finding, counts findings without a
+fixed version, and marks the report for manual review. Strict release mode
+fails on any finding; there is no advisory ignore-list or reachability waiver
+in the workflow.
+
+evaluation/benchmark_contract.json pins the candidate comparison set and
+predeclares policy, protected-quality, incorrect-local-answer, latency and
+RSS gates. Unmeasured or license-review-required candidates cannot be treated
+as promotion evidence. config/publication.yaml binds the upstream model and
+original dataset identities while keeping HF publishing disabled until the
+owner grants narrowly scoped authority.
+
+scripts/promote_release.py validates two matching native candidate manifests
+and requires passed security, SBOM, provenance and signature evidence before
+writing a stable manifest. It does not mutate registry tags; that final
+operation remains protected release-environment work.
+
 ## Evidence status
 
 Local regression tests verify documentation-only, runtime, dependency,
