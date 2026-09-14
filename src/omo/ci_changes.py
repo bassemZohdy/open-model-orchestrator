@@ -51,6 +51,7 @@ CONTAINER_PATHS: Final = (
 DEPENDENCY_PATHS: Final = ("build-constraints.txt", "pyproject.toml")
 MODEL_ONLY_FILES: Final = frozenset(
     {
+        "config/training.yaml",
         "scripts/check_evaluation_contract.py",
     }
 )
