@@ -1,23 +1,55 @@
 """Budget-free local preparation. Actual tuning remains explicitly unavailable."""
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "evaluation"))
-from dataset import validate
+import yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from evaluation.dataset import validate  # noqa: E402, I001
 
 
-def main():
+DEFAULT_CONFIG = ROOT / "config/training.yaml"
+
+
+def _digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_plan(config_path: Path = DEFAULT_CONFIG) -> dict:
+    if config_path.stat().st_size > 65536:
+        raise ValueError("training configuration too large")
+    config = yaml.safe_load(config_path.read_text())
+    if not isinstance(config, dict):
+        raise ValueError("training configuration must be an object")
+    if config.get("schema_version") != "1":
+        raise ValueError("unsupported training configuration")
+    if config.get("enabled") is not False or config.get("execution") != "dry-run-only":
+        raise ValueError("training execution must remain disabled")
+    dataset = ROOT / config["dataset"]["path"]
+    rows, dataset_digest = validate(str(dataset))
+    return {
+        "config": config,
+        "config_sha256": _digest(config_path),
+        "dataset_sha256": dataset_digest,
+        "dataset_records": len(rows),
+        "train_examples": sum(r.split == "train" for r in rows),
+        "base_model": config["base_model"],
+    }
+
+
+def main() -> None:
     p = argparse.ArgumentParser(
         description="Prepare an offline SFT experiment; never creates a remote job"
     )
     p.add_argument("--dry-run", action="store_true")
-    p.add_argument("--dataset", default="evaluation/seed.jsonl")
+    p.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     args = p.parse_args()
-    rows, digest = validate(args.dataset)
-    train = [r for r in rows if r.split == "train"]
+    plan = load_plan(args.config)
     if not args.dry_run:
         raise SystemExit(
             "Training is disabled: select and validate the isolated training stack, "
@@ -30,15 +62,20 @@ def main():
                 "training_enabled": False,
                 "remote_jobs_enabled": False,
                 "automatic_promotion": False,
-                "dataset_sha256": digest,
-                "train_examples": len(train),
-                "proposed_base_model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+                "config_sha256": plan["config_sha256"],
+                "dataset_sha256": plan["dataset_sha256"],
+                "dataset_records": plan["dataset_records"],
+                "train_examples": plan["train_examples"],
+                "base_model": plan["base_model"],
                 "proposal": {
                     "method": "full supervised fine-tuning baseline before comparing adapters",
-                    "max_steps": 20,
-                    "max_sequence_tokens": 512,
-                    "max_runtime_minutes": 15,
-                    "max_cost_usd": 0,
+                    **plan["config"]["limits"],
+                },
+                "export": plan["config"]["export"],
+                "lineage": {
+                    "dataset_path": plan["config"]["dataset"]["path"],
+                    "base_model_revision": plan["base_model"]["revision"],
+                    "rollback_manifest_required": True,
                 },
                 "not_implemented": [
                     "training execution",
