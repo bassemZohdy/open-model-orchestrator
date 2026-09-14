@@ -1,0 +1,12 @@
+schema_version: "1"
+callers:
+  # Store only SHA-256(key), never the bearer token itself.
+  - id: example-client
+    tenant: example-tenant
+    key_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+    enabled: false
+    role: caller
+    max_cost_usd: 0.01
+    daily_budget_usd: 1.0
+    allowed_retention: [none]
+    allowed_hosts: [api.example.com]
