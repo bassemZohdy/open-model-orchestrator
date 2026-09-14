@@ -108,11 +108,18 @@ def decide(
         return Decision(action="clarify", reason="missing_task_details", registry_version=version)
     if proposal.capability == "current_information":
         return Decision(action="reject", reason="retrieval_unavailable", registry_version=version)
-    # Model helper arguments are not authorized in this unevaluated checkpoint.
-    # Only explicit typed arguments / exact calc grammar enter helper execution.
     if proposal.action == "helper":
+        if proposal.helper is None:
+            return Decision(
+                action="reject", reason="invalid_helper_proposal", registry_version=version
+            )
+        if proposal.helper.id == "even_squares" and not settings.sandbox_enabled:
+            return Decision(action="reject", reason="sandbox_disabled", registry_version=version)
         return Decision(
-            action="clarify", reason="explicit_helper_arguments_required", registry_version=version
+            action="helper",
+            reason="validated_model_helper",
+            helper=proposal.helper,
+            registry_version=version,
         )
     eligible = eligible_models(request, proposal, registry, settings)
     if eligible:

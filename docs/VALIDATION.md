@@ -6,8 +6,9 @@ Verified 2026-09-13. Implemented code and Docker changes are committed at `23a0b
 
 - Real SmolLM2-360M Q8_0 CPU inference through llama-cpp-python 0.3.35, with checksum verification, warmup, context/queue bounds, cancellation and worker restart.
 - Exact decimal values/units and real Monty 0.0.23 computation; no native guest eval/exec fallback. File/proc/environment/network/DNS/subprocess/FFI/package access, state reuse, inherited descriptors and resource bounds are covered by actual sandbox tests.
-- Strict configuration/API/proposal schemas, authentication, input limits, immutable registries, policy constraints before provider ranking, bounded external calls and buffered SSE. External-provider contracts use fakes; no live-provider quality or paid-inference result is claimed.
+- Strict configuration/API/proposal schemas, authentication, input limits, immutable registries, policy constraints before provider ranking, bounded external calls and validated upstream SSE with buffered downstream delivery. External-provider contracts use fakes; no live-provider quality or paid-inference result is claimed.
 - Bundled/slim Docker targets, hardened Compose, native AMD64/ARM64 validation, secret scanning, container reports and strict release vulnerability gates. Training is a dry-run preparation tool only.
+- Typed model-proposed helper arguments, predeclared cross-model evaluation gates, disabled HF publication identity checks and evidence-bound multi-platform promotion validation are covered by local contract tests.
 
 Local full suite: **103 passed in 15.34 s**. After CI exposed a process-observation race, the cancellation test was strengthened to require complete reaping; all **27 sandbox tests passed in 1.03 s**, and the updated remote 91-test contract suite passed. Ruff lint/format, strict mypy over 14 source files, lock checks, 22-record dataset validation and release-event/schedule contracts passed.
 

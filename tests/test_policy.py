@@ -107,6 +107,27 @@ def test_explicit_current_information_rejected(entry, request_factory):
     assert decision.reason == "retrieval_unavailable"
 
 
+def test_model_helper_proposal_is_typed_and_authorized(entry, request_factory):
+    request = request_factory()
+    proposal = Proposal(
+        action="helper",
+        helper={"id": "even_squares", "values": [1, 2, 3]},
+    )
+    decision = decide(
+        request,
+        Registry(version="test", models=(entry,)),
+        Settings(external_enabled=True, sandbox_enabled=True),
+        proposal,
+    )
+    assert decision.action == "helper"
+    assert decision.reason == "validated_model_helper"
+
+
+def test_model_helper_proposal_requires_arguments():
+    with pytest.raises(ValidationError, match="helper arguments"):
+        Proposal(action="helper")
+
+
 @pytest.mark.parametrize(
     "extra",
     [
@@ -208,3 +229,15 @@ async def test_typed_sandbox_path(service, request_factory):
     )
     assert result["omo"]["executor"] == "monty"
     assert json.loads(result["choices"][0]["message"]["content"]) == [4, 16, 36]
+
+
+async def test_model_proposed_helper_uses_typed_execution(service, request_factory):
+    service.model.proposal = {
+        "action": "helper",
+        "capability": "text",
+        "helper": {"id": "even_squares", "values": [2, 3, 4]},
+    }
+    result = await service.chat(request_factory())
+    assert result["omo"]["reason"] == "validated_model_helper"
+    assert result["omo"]["executor"] == "monty"
+    assert json.loads(result["choices"][0]["message"]["content"]) == [4, 16]

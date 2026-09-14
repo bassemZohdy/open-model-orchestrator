@@ -41,6 +41,12 @@ def build(commit, image, digest, architecture, version, root=Path(".")):
         "calibration": "uncalibrated",
         "compatibility": {"python": "3.12", "cpu_only": True, "context_tokens": 2048},
         "publication_state": "candidate; stable aliases unchanged",
+        "security_audit": "pending",
+        "attestations": {
+            "sbom_verified": False,
+            "provenance_verified": False,
+            "signature_verified": False,
+        },
         "hf_publication": None,
     }
 

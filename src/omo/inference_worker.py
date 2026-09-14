@@ -10,6 +10,45 @@ from llama_cpp import Llama
 from llama_cpp.llama_grammar import LlamaGrammar
 
 
+def _parse_request(line: str) -> dict[str, Any] | None:
+    if not line or len(line.encode()) > 65536:
+        return None
+    try:
+        request = json.loads(line)
+    except (TypeError, ValueError):
+        return None
+    if not isinstance(request, dict):
+        return None
+    messages = request.get("messages")
+    if not isinstance(messages, list) or not 1 <= len(messages) <= 24:
+        return None
+    total_bytes = 0
+    for message in messages:
+        if (
+            not isinstance(message, dict)
+            or set(message) != {"role", "content"}
+            or message["role"] not in {"system", "user", "assistant"}
+            or not isinstance(message["content"], str)
+            or not 1 <= len(message["content"]) <= 60000
+        ):
+            return None
+        total_bytes += len(message["content"].encode())
+    if total_bytes > 60000:
+        return None
+    max_tokens = request.get("max_tokens")
+    if type(max_tokens) is not int or not 8 <= max_tokens <= 256:
+        return None
+    if (
+        "schema" in request
+        and request["schema"] is not None
+        and not isinstance(request["schema"], dict)
+    ):
+        return None
+    if "count_only" in request and type(request["count_only"]) is not bool:
+        return None
+    return request
+
+
 def main() -> None:
     config = json.loads(sys.stdin.readline(8192))
     model = Llama(
@@ -29,7 +68,10 @@ def main() -> None:
     print(json.dumps({"ready": True}), flush=True)
     for line in sys.stdin:
         try:
-            request = json.loads(line)
+            request = _parse_request(line)
+            if request is None:
+                print(json.dumps({"error": "invalid_request"}), flush=True)
+                continue
             messages = request["messages"]
             # Same ChatML tokens as the selected handler, including the default
             # system text when missing. Count through the loaded model tokenizer.

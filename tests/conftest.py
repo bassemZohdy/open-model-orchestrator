@@ -1,4 +1,6 @@
 import json
+import sys
+from pathlib import Path
 
 import httpx
 import pytest
@@ -9,6 +11,8 @@ from omo.provider import OpenAIProvider
 from omo.registry import ModelEntry, Registry, RegistryStore
 from omo.sandbox import MontySandbox
 from omo.service import Orchestrator
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 class FakeModel:

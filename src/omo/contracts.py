@@ -73,7 +73,13 @@ class Proposal(StrictModel):
     action: Action
     capability: Capability = "text"
     helper: HelperCall | None = None
-    # No URL, confidence, secret, process, limits or executable fields are accepted.
+
+    @model_validator(mode="after")
+    def helper_consistency(self) -> Proposal:
+        if (self.action == "helper") != (self.helper is not None):
+            raise ValueError("helper arguments require action=helper")
+        # No URL, confidence, secret, process, limits or executable fields are accepted.
+        return self
 
 
 class Decision(StrictModel):
