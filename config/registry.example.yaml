@@ -13,6 +13,7 @@ models:
     max_output_tokens: 256
     input_usd_per_million: null
     output_usd_per_million: null
+    tokenizer: utf8-byte-upper-bound
     retention: unknown
     priority: 100
     provenance: "Administrator must verify capabilities, pricing and retention before enabling"
