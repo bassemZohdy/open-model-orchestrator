@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
+      model: ${{ steps.select.outputs.model }}
       container: ${{ steps.select.outputs.container }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -69,7 +70,6 @@ jobs:
           python-version: '3.12'
           enable-cache: true
       - run: uv sync --locked
-      - run: uv lock --check
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
       - run: uv run --no-sync mypy
@@ -77,8 +77,39 @@ jobs:
       - run: uv run --no-sync python evaluation/dataset.py --validate evaluation/seed.jsonl
       - run: uv run --no-sync python scripts/check_evaluation_contract.py
       - run: uv run --no-sync python scripts/check_publication_contract.py
-      - run: uv run --no-sync python training/sft.py --dry-run
       - run: uv run --no-sync python scripts/check_release_contract.py
+  real-model:
+    needs: changes
+    if: >-
+      github.repository == 'bassemZohdy/open-model-orchestrator' &&
+      (needs.changes.outputs.model == 'true' ||
+      github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CC: gcc
+      CXX: g++
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      CMAKE_ARGS: '-DGGML_NATIVE=OFF -DGGML_BLAS=OFF -DGGML_OPENMP=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --no-sync python training/sft.py --dry-run
+      - run: uv run --no-sync python scripts/download_model.py
+      - run: uv run --no-sync pytest -m model -q
+      - run: uv run --no-sync python evaluation/run.py --output evidence/evaluation.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: real-model-evidence
+          path: evidence/
+          retention-days: 14
   native-container:
     needs: [changes, checks, secrets]
     if: needs.changes.outputs.container == 'true' || inputs.strict_security
