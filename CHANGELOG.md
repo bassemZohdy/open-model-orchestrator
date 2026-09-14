@@ -4,6 +4,9 @@
 
 - Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
 - Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
+- Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.
+- Added typed model-proposed helper arguments with the same strict schemas as explicit helper requests; untyped or incomplete proposals fail closed.
+- Added predeclared cross-model evaluation gates, a disabled HF publication identity contract, security-report validation, and evidence-bound multi-platform promotion validation. External account, signing and security findings remain release blockers.
 
 ## Unreleased — reviewer workflow hardening
 
@@ -17,7 +20,7 @@
 - Exact decimal helper and a bounded even-squares transformation through real Monty workers.
 - Strict API/configuration/proposal schemas, protected endpoints, immutable registry snapshots and hard-constraint external selection.
 - One pooled OpenAI-compatible/OpenRouter adapter with bounded responses, limited 429 retries and safe failures.
-- Buffered SSE delivery; no provider output rewriting or native guest-code fallback.
+- Validated upstream SSE collection with buffered downstream delivery; no provider output rewriting or native guest-code fallback.
 - Real model, sandbox, policy, provider and API tests; original split-aware seed data and offline development evaluator.
 - Bundled/slim Docker targets, hardened Compose and native architecture CI contracts.
 - Manual gated candidate-release workflow; training, schedules and model promotion remain disabled.
