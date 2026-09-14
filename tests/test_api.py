@@ -1,3 +1,4 @@
+import hashlib
 import json
 
 import httpx
@@ -114,3 +115,57 @@ async def test_loopback_development_not_an_auth_bypass(service):
             assert (
                 await c.get("/v1/models", headers={"X-Forwarded-For": "127.0.0.1"})
             ).status_code == 401
+
+
+async def test_configured_access_policy_authenticates_caller(service, tmp_path):
+    token = "client-secret-with-more-than-24-characters"
+    policy = tmp_path / "access.json"
+    policy.write_text(
+        json.dumps(
+            {
+                "schema_version": "1",
+                "callers": [
+                    {
+                        "id": "client",
+                        "tenant": "tenant-a",
+                        "key_sha256": hashlib.sha256(token.encode()).hexdigest(),
+                        "max_cost_usd": 0,
+                    }
+                ],
+            }
+        )
+    )
+    app = create_app(Settings(access_policy_path=str(policy)), service)
+    async with app.router.lifespan_context(app):
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as c:
+            assert (
+                await c.get("/v1/models", headers={"Authorization": "Bearer " + token})
+            ).status_code == 200
+            assert (await c.get("/v1/models")).status_code == 401
+
+
+async def test_registry_reload_keeps_last_known_good_snapshot(service, tmp_path):
+    path = tmp_path / "registry.json"
+    path.write_text('{"schema_version":"1","version":"new","models":[]}')
+    app = create_app(
+        Settings(
+            api_key=KEY,
+            registry_path=str(path),
+            registry_reload_enabled=True,
+        ),
+        service,
+    )
+    async with app.router.lifespan_context(app):
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+            headers={"Authorization": "Bearer " + KEY},
+        ) as c:
+            assert (await c.post("/admin/registry/reload")).status_code == 200
+            assert (await c.get("/admin/registry/status")).json()["version"] == "new"
+            path.write_text('{"version":"bad","models":[{"id":"broken"}]}')
+            failed = await c.post("/admin/registry/reload")
+            assert failed.status_code == 422
+            assert failed.json()["registry"]["version"] == "new"
