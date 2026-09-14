@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Bound automatic Claude review instructions to the triggering pull-request head SHA and require the review comment to identify that revision, making stale review evidence detectable after synchronization.
 - Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
 - Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
 - Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.

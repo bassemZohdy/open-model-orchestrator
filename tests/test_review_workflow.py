@@ -44,11 +44,14 @@ def test_reviewer_trust_and_execution_bounds() -> None:
     for step in job["steps"]:
         assert re.fullmatch(r"[^@]+@[0-9a-f]{40}", step["uses"])
     inputs = review["with"]
+    assert review["env"] == {"REVIEW_HEAD_SHA": "${{ github.event.pull_request.head.sha }}"}
     assert inputs["allowed_bots"] == "chatgpt-codex-connector[bot]"
     assert "allowed_non_write_users" not in inputs
     assert "secrets.CLAUDE_CODE_OAUTH_TOKEN" in inputs["claude_code_oauth_token"]
     assert "--comment" in inputs["prompt"]
     assert "Never edit files" in inputs["prompt"]
+    assert "${{ env.REVIEW_HEAD_SHA }}" in inputs["prompt"]
+    assert "identify that commit" in inputs["prompt"]
     assert "--max-turns 20" in inputs["claude_args"]
     assert '--disallowedTools "Edit,Write,NotebookEdit"' in inputs["claude_args"]
 
