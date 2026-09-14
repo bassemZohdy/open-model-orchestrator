@@ -1,0 +1,3 @@
+[allowlist]
+description = "The example registry contains configuration identifiers, not credentials."
+paths = ['''config/registry\.example\.yaml''']
