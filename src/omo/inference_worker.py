@@ -29,11 +29,11 @@ def _parse_request(line: str) -> dict[str, Any] | None:
             or set(message) != {"role", "content"}
             or message["role"] not in {"system", "user", "assistant"}
             or not isinstance(message["content"], str)
-            or not 1 <= len(message["content"]) <= 12000
+            or not 1 <= len(message["content"]) <= 60000
         ):
             return None
         total_bytes += len(message["content"].encode())
-    if total_bytes > 16000:
+    if total_bytes > 60000:
         return None
     max_tokens = request.get("max_tokens")
     if type(max_tokens) is not int or not 8 <= max_tokens <= 256:
