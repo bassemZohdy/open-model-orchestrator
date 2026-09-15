@@ -131,7 +131,7 @@ def test_audit_bundle_rejects_unknown_review_prompt() -> None:
         prompt_id="unknown",
         reviewer_id="reviewer-1",
         decision="needs-review",
-        criteria=ReviewCriteria(selection_correct=None),
+        criteria=ReviewCriteria(selection_correct=True),
     )
     with pytest.raises(ValueError, match="unknown prompt"):
         _bundle(review)
