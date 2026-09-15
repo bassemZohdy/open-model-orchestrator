@@ -1,11 +1,27 @@
 # Validation and delivery evidence
 
-This document retains the historical baseline evidence from 2026-09-13. The
-implementation baseline and CI cleanup are now merged into `main`; current
-remaining work and the newer offline contracts are tracked in [TODO](../TODO.md),
+This document retains the historical baseline evidence from 2026-09-13 and the
+current verification of `main`. The OMO-008–OMO-011 offline foundations and CI
+cleanup are merged; current remaining work is tracked in [TODO](../TODO.md),
 [training](TRAINING.md), [dataset](DATASET.md) and [operations](OPERATIONS.md).
 The evidence below is not a claim that paid training, live-provider evaluation
 or publication has been performed.
+
+## Current main verification — PR #11, 2026-09-14
+
+PR [#11](https://github.com/bassemZohdy/open-model-orchestrator/pull/11) was
+reviewed by Claude with no findings and merged into `main` at
+`cc9dbbfde2d4c926842f30e385e9f07444b552ce`. The required
+[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105374)
+passed static checks, secret scanning, real-model validation and native AMD64
+and ARM64 container acceptance. The current local non-model suite passed **163
+tests**, with **12 model tests deselected**. Dataset validation passed for 30
+original synthetic records and the outcome example passed with SHA-256
+`ba53c337cee6a7611e17e82c1661e90b99c0181efdfe9dd785c6a863e8a66714`.
+
+The training, access-policy, evaluation, publication and release contracts also
+passed. Training, live-provider baselines, paid operations, publication and
+stable promotion remain disabled.
 
 ## Implemented and tested
 
@@ -15,7 +31,11 @@ or publication has been performed.
 - Bundled/slim Docker targets, hardened Compose, native AMD64/ARM64 validation, secret scanning, container reports and strict release vulnerability gates. Training is a dry-run preparation tool only.
 - Typed model-proposed helper arguments, predeclared cross-model evaluation gates, disabled HF publication identity checks and evidence-bound multi-platform promotion validation are covered by local contract tests.
 
-Local full suite: **103 passed in 15.34 s**. After CI exposed a process-observation race, the cancellation test was strengthened to require complete reaping; all **27 sandbox tests passed in 1.03 s**, and the updated remote 91-test contract suite passed. Ruff lint/format, strict mypy over 14 source files, lock checks, 22-record dataset validation and release-event/schedule contracts passed.
+The current local verification passed **163 non-model tests**, with **12 model
+tests deselected**, plus Ruff lint/format, strict mypy, 30-record dataset and
+outcome validation, training/access/evaluation contracts, and release-event and
+schedule contracts. Historical baseline measurements and earlier run details
+remain below for traceability.
 
 The trusted real-model run for the implementation commit is [34755031771](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34755031771): **12 passed**, plus **46/46 development evaluation checks**, with zero external calls. Its artifact ID is `10315969857`; archive SHA-256 `27d597194fa85524958b16317a104e93dc7b769319d260f61d9a1b6549c3b87f`.
 
@@ -50,12 +70,17 @@ Development tests may pass while security reports contain release-blocking findi
 
 | Destination | Verified state |
 |---|---|
-| GitHub `bassemZohdy/open-model-orchestrator` | Baseline and CI cleanup are merged into `main`; no model publication or stable release |
+| GitHub `bassemZohdy/open-model-orchestrator` | OMO-008–OMO-011 offline foundations and CI cleanup are merged into `main` through PR #11; no model publication or stable release |
 | Docker Hub `bzohdy/open-model-orchestrator` | Login verified in run `34754068464`; artifact `10315684770`, archive SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`. Push permission untested; no candidate/stable image published by this work |
 | HF `BassemZohdy/open-model-orchestrator` | Intended target; not created/published. Connected account has no publishing scope |
 | HF `BassemZohdy/open-model-orchestrator-dataset` | Intended target; not created/published. Original data is committed in GitHub |
 | Paid training/inference, schedules, automatic promotion | Not executed; disabled |
 
-The bundled artifact remains upstream `HuggingFaceTB/SmolLM2-360M-Instruct-GGUF`, revision `593b5a2e04c8f3e4ee880263f93e0bd2901ad47f`, SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`. It is not an OMO fine-tune. Dataset SHA-256: `020e70c16088a63304f1c5fef8b505023617282d27251c5298fb2aeea30f3784`.
+The bundled artifact remains upstream `HuggingFaceTB/SmolLM2-360M-Instruct-GGUF`, revision `593b5a2e04c8f3e4ee880263f93e0bd2901ad47f`, SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`. It is not an OMO fine-tune. Current dataset SHA-256: `44a42fa08350b9e2bccaafa99c9baf668028ce54a99c5d56ff62ce200e1f05d3`. Current outcome-example SHA-256: `ba53c337cee6a7611e17e82c1661e90b99c0181efdfe9dd785c6a863e8a66714`.
 
-Earlier failed runs remain visible: the first build used an unsupported uv flag (fixed), and one duplicate push run hit the cancellation-test observation race (fixed). No earlier failure is presented as a success. Final source status and PR-head checks can be independently inspected on the PR; reproducible commands are in [README](../README.md), owner setup in [RELEASE](RELEASE.md), and only remaining work in [TODO](../TODO.md).
+Earlier failed runs remain visible: the first build used an unsupported uv flag
+(fixed), one duplicate push run hit the cancellation-test observation race
+(fixed), and PR #11 initially exposed two synchronization defects that were
+corrected before its final green run. No earlier failure is presented as a
+success. Reproducible commands are in [README](../README.md), owner setup in
+[RELEASE](RELEASE.md), and only remaining work in [TODO](../TODO.md).
