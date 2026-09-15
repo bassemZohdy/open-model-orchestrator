@@ -2,7 +2,17 @@
 
 ## Unreleased
 
-No unreleased changes.
+- Frozen the OMO-012 routing/classification contract: the tiny generative
+  model may propose only external_model, helper or clarify through the strict
+  Proposal schema; deterministic policy retains local_answer, reject,
+  authorization and target eligibility.
+- Added bounded ordered multi-turn serialization and duplicate-key-safe Proposal
+  parsing, plus invalid/ambiguous proposal regression coverage.
+- Added the OMO-013 deterministic training-dataset builder and manifest. It
+  canonicalizes the original synthetic train split, writes input/output
+  checksums and excludes development, validation, calibration and protected
+  test labels. Hub publication and human-reviewed corpus expansion remain
+  blocked.
 
 ## 0.1.0 development follow-up — 2026-09-14
 
@@ -51,6 +61,6 @@ No unreleased changes.
 - Expanded container acceptance for authentication, resource bounds and real sandbox isolation; release manifests bind code/model/data/policy identities.
 - Fixed a cancellation-test observation race and now require complete worker reaping rather than accepting zombie state.
 
-- Native AMD64 and ARM64 bundled images passed offline model/helper/sandbox/authentication/limits/shutdown acceptance at implementation commit 23a0b2881ec69f42d864d15440f8f06ef3969239. The pinned PCRE2 update removed two findings; remaining strict-audit blockers are retained in TODO.md.
+- Native AMD64 and ARM64 bundled images passed offline model/helper/sandbox/authentication/limits/shutdown acceptance at implementation commit 23a0b2881ec69f42d864d15440f8f06ef3969234. The pinned PCRE2 update removed two findings; remaining strict-audit blockers are retained in TODO.md.
 
 Publication and platform evidence are recorded separately in docs/VALIDATION.md. This is not a production release or an OMO fine-tuned model.
