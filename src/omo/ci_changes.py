@@ -53,6 +53,7 @@ MODEL_ONLY_FILES: Final = frozenset(
     {
         "config/training.yaml",
         "scripts/check_evaluation_contract.py",
+        "scripts/check_training_dispatch.py",
     }
 )
 CONTAINER_ONLY_FILES: Final = frozenset(
@@ -97,7 +98,7 @@ def _matches(path: str, patterns: tuple[str, ...]) -> bool:
 
 
 def _classify_path(path: str) -> dict[str, bool] | None:
-    """Classify one path; ``None`` means it is unknown and must fail closed."""
+    """Classify one path; None means it is unknown and must fail closed."""
     normalised = _normalise_path(path)
 
     if normalised in MODEL_ONLY_FILES:
@@ -131,7 +132,7 @@ def _classify_path(path: str) -> dict[str, bool] | None:
 
 
 def classify(paths: Iterable[str]) -> dict[str, bool]:
-    """Return the expensive suites affected by *paths*.
+    """Return the expensive suites affected by paths.
 
     Empty or unknown change sets intentionally select full validation. This
     keeps a new repository file, an unexpected workflow, or a parser change

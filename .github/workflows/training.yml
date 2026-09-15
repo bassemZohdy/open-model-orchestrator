@@ -1,0 +1,115 @@
+name: OMO manual training preflight
+
+on:
+  workflow_dispatch:
+    inputs:
+      code_sha:
+        description: "Exact application commit to prepare"
+        required: true
+        type: string
+      dataset_revision:
+        description: "Exact immutable dataset revision"
+        required: true
+        type: string
+      base_model_revision:
+        description: "Exact immutable base-model revision"
+        required: true
+        type: string
+      method:
+        description: "Training method"
+        required: true
+        type: choice
+        options: [full-sft, lora]
+        default: full-sft
+      hardware:
+        description: "Approved hardware envelope"
+        required: true
+        type: choice
+        options: [cpu-small, a10g-small]
+        default: cpu-small
+      execution_backend:
+        description: "Isolated execution backend"
+        required: true
+        type: choice
+        options: [huggingface-job]
+        default: huggingface-job
+      timeout_minutes:
+        description: "Maximum remote runtime in minutes"
+        required: true
+        type: string
+        default: "15"
+      max_cost_usd:
+        description: "Maximum approved cost in USD"
+        required: true
+        type: string
+        default: "0"
+      resume_run_id:
+        description: "Prior isolated run identifier, or none"
+        required: true
+        type: string
+        default: none
+      dry_run:
+        description: "Validate inputs only; remote execution is disabled"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: omo-training-${{ github.repository }}-${{ inputs.code_sha }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    if: >-
+      github.repository == 'bassemZohdy/open-model-orchestrator' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: training
+    env:
+      CODE_SHA: ${{ inputs.code_sha }}
+      DATASET_REVISION: ${{ inputs.dataset_revision }}
+      BASE_MODEL_REVISION: ${{ inputs.base_model_revision }}
+      TRAINING_METHOD: ${{ inputs.method }}
+      TRAINING_HARDWARE: ${{ inputs.hardware }}
+      EXECUTION_BACKEND: ${{ inputs.execution_backend }}
+      TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+      MAX_COST_USD: ${{ inputs.max_cost_usd }}
+      RESUME_RUN_ID: ${{ inputs.resume_run_id }}
+      DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Checkout the exact application commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.code_sha }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Set up locked Python environment
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - name: Validate exact revisions, budget and resume inputs
+        run: >
+          uv run --no-sync python scripts/check_training_dispatch.py
+          --code-sha "$CODE_SHA"
+          --dataset-revision "$DATASET_REVISION"
+          --base-model-revision "$BASE_MODEL_REVISION"
+          --method "$TRAINING_METHOD"
+          --hardware "$TRAINING_HARDWARE"
+          --execution-backend "$EXECUTION_BACKEND"
+          --timeout-minutes "$TIMEOUT_MINUTES"
+          --max-cost-usd "$MAX_COST_USD"
+          --resume-run-id "$RESUME_RUN_ID"
+          --dry-run "$DRY_RUN"
+      - name: Validate the offline lineage plan
+        run: uv run --no-sync python training/sft.py --dry-run --config config/training.yaml
+      - name: Stop before remote execution or promotion
+        run: |
+          test "$DRY_RUN" = "true"
+          echo "Preflight passed; HF Job dispatch and promotion remain disabled."

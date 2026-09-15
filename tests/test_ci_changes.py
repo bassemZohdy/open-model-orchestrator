@@ -27,6 +27,7 @@ def test_documentation_only_changes_skip_expensive_suites(path: str) -> None:
         ("training/sft.py", {"model": True, "container": False}),
         ("config/training.yaml", {"model": True, "container": False}),
         ("scripts/check_evaluation_contract.py", {"model": True, "container": False}),
+        ("scripts/check_training_dispatch.py", {"model": True, "container": False}),
         ("scripts/check_security_report.py", {"model": False, "container": True}),
         ("scripts/check_publication_contract.py", {"model": False, "container": False}),
         ("scripts/check_release_contract.py", {"model": False, "container": False}),
@@ -159,4 +160,10 @@ def test_workflows_keep_lightweight_checks_and_force_release_validation() -> Non
     assert "uv lock --check" not in ci_text
     assert "python training/sft.py --dry-run" in ci_text
     assert "python training/dataset.py --split train" in ci_text
+    training_text = Path(".github/workflows/training.yml").read_text()
+    assert "workflow_dispatch:" in training_text
+    assert "pull_request:" not in training_text
+    assert "schedule:" not in training_text
+    assert "uv sync --locked" in training_text
+    assert "dry-run" in training_text
     assert set(release_on) == {"workflow_dispatch"}

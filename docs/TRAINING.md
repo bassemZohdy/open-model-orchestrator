@@ -29,7 +29,13 @@ uv run --no-sync python scripts/check_training_contract.py
 
 The output includes hashes for the configuration and dataset, the exact base
 model revision, proposed limits and required export evidence. It is a plan,
-not a trained-model result. The current source produces only four trainable
+not a trained-model result.
+
+## Manual OMO-014 preflight
+
+The manual-only [training workflow](../.github/workflows/training.yml) is a protected preflight, not an execution switch. Dispatch it from main with exact 40-character code, dataset and base-model revisions plus the method, hardware, timeout, maximum cost, backend and optional resume-run identifier. It checks out the exact code, runs `uv sync --locked`, validates the offline lineage plan and then stops. Concurrency cancels an older preflight for the same code revision.
+
+The workflow accepts only `dry_run: true`; it does not create an HF Job, upload checkpoints, publish a model or promote an alias. A future HF Job dispatch still requires the protected `training` environment, owner-approved spend/credits, scoped credentials and the larger reviewed OMO-013 corpus. The current source produces only four trainable
 classification records. Enabling execution requires a materially larger
 reviewed corpus, a separately reviewed isolated environment, locked
 Transformers/PyTorch/TRL dependencies, Trackio monitoring, a full-versus-
