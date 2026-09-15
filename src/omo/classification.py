@@ -53,5 +53,5 @@ def parse_proposal(raw: str) -> Proposal:
         if not isinstance(payload, dict):
             raise ValueError("proposal must be a JSON object")
         return Proposal.model_validate(payload)
-    except (TypeError, ValueError, json.JSONDecodeError) as exc:
+    except (TypeError, ValueError) as exc:
         raise ValueError("invalid classification proposal") from exc
