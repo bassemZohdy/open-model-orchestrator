@@ -22,6 +22,9 @@ No unreleased changes.
   reported no findings and the PR passed all required CI jobs before merge.
 - Merged the OMO-008–OMO-011 offline foundations in PR #11 after a clean Claude
   review and passing required CI, including native AMD64 and ARM64 validation.
+- Hardened the native inference protocol against duplicate JSON keys and added
+  restart-durable local budget reservations; distributed accounting and provider
+  cost reconciliation remain deployment work.
 - Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
 - Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
 - Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.
