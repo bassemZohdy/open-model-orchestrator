@@ -1,6 +1,15 @@
 schema_version: "1"
 enabled: false
 execution: dry-run-only
+objective:
+  id: omo-routing-proposal-v1
+  method: causal-lm-sft
+  input_serialization: runtime-analysis-messages-v1
+  target_format: pydantic-proposal-json-v1
+  proposal_actions: [external_model, helper, clarify]
+  capabilities: [text, coding, current_information]
+  policy_owned_actions: [local_answer, reject]
+  local_answer_training: excluded
 base_model:
   repository: HuggingFaceTB/SmolLM2-360M-Instruct
   revision: 593b5a2e04c8f3e4ee880263f93e0bd2901ad47f
@@ -8,6 +17,9 @@ dataset:
   path: evaluation/seed.jsonl
   required_source: omo-original-synthetic
   required_license: Apache-2.0
+  training_splits: [train]
+  validation_splits: [validation, calibration]
+  protected_splits: [test]
 limits:
   max_steps: 20
   max_sequence_tokens: 512

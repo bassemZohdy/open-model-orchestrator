@@ -158,4 +158,5 @@ def test_workflows_keep_lightweight_checks_and_force_release_validation() -> Non
     ci_text = Path(".github/workflows/ci.yml").read_text()
     assert "uv lock --check" not in ci_text
     assert "python training/sft.py --dry-run" in ci_text
+    assert "python training/dataset.py --split train" in ci_text
     assert set(release_on) == {"workflow_dispatch"}

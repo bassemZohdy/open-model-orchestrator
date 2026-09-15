@@ -6,11 +6,12 @@ import json
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
-from omo.contracts import Action, Capability, Message, StrictModel
+from omo.classification import POLICY_OWNED_ACTIONS, PROPOSAL_ACTIONS
+from omo.contracts import Action, Capability, Message, Proposal, StrictModel
 
 
 class IntentRecord(StrictModel):
@@ -24,8 +25,22 @@ class IntentRecord(StrictModel):
     messages: list[Message]
     required_capability: Capability
     expected_action: Action
+    expected_proposal: Proposal | None = None
     reference_terms: list[str] = Field(default_factory=list)
     label_provenance: str = "bootstrap author; development-only label"
+
+    @model_validator(mode="after")
+    def proposal_matches_runtime_boundary(self) -> Self:
+        if self.expected_action in PROPOSAL_ACTIONS:
+            if self.expected_proposal is None:
+                raise ValueError("model-routed record requires expected_proposal")
+            if self.expected_proposal.action != self.expected_action:
+                raise ValueError("expected proposal action mismatch")
+            if self.expected_proposal.capability != self.required_capability:
+                raise ValueError("expected proposal capability mismatch")
+        elif self.expected_action in POLICY_OWNED_ACTIONS and self.expected_proposal is not None:
+            raise ValueError("policy-owned action must not have an expected proposal")
+        return self
 
 
 class OutcomeRecord(StrictModel):
