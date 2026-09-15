@@ -90,7 +90,9 @@ class HumanReviewRecord(StrictModel):
     @model_validator(mode="after")
     def decision_matches_criteria(self) -> Self:
         values = self.criteria.model_dump().values()
-        if self.decision == "pass" and any(value is not True for value in values if value is not None):
+        if self.decision == "pass" and any(
+            value is not True for value in values if value is not None
+        ):
             raise ValueError("passing review requires every applicable criterion")
         if self.decision == "fail" and not any(value is False for value in values):
             raise ValueError("failed review requires a failed criterion")
