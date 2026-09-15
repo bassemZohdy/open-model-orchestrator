@@ -24,9 +24,7 @@ SHA_PATTERN = r"^[0-9a-fA-F]{40}$"
 class SourceAuditRecord(StrictModel):
     schema_version: Literal["1"] = "1"
     source_id: str = Field(pattern=IDENTIFIER_PATTERN)
-    source_kind: Literal[
-        "omo-original-synthetic", "external-benchmark", "provider-generated"
-    ]
+    source_kind: Literal["omo-original-synthetic", "external-benchmark", "provider-generated"]
     license_spdx_id: str = Field(min_length=1, max_length=80)
     license_status: Literal["pending", "approved", "rejected"]
     provenance_summary: str = Field(min_length=1, max_length=1000)
