@@ -56,3 +56,25 @@ def test_budget_ledger_reserves_bounded_daily_budget():
     assert ledger.reserve(client, 0.01, now)
     assert not ledger.reserve(client, 0.01, now)
     assert ledger.reserve(client, 0.01, now + timedelta(days=1))
+
+
+def test_budget_ledger_can_persist_reservations(tmp_path):
+    client = caller()
+    now = datetime(2026, 1, 1, tzinfo=UTC)
+    path = tmp_path / "budget.sqlite3"
+    first = BudgetLedger(str(path))
+    assert first.reserve(client, 0.01, now)
+    first.close()
+
+    second = BudgetLedger(str(path))
+    assert second.snapshot(now) == {"client": 0.01}
+    assert second.reserve(client, 0.01, now)
+    assert not second.reserve(client, 0.01, now)
+    second.close()
+
+
+def test_budget_ledger_rejects_non_finite_amounts():
+    client = caller()
+    ledger = BudgetLedger()
+    assert not ledger.reserve(client, float("nan"))
+    assert not ledger.reserve(client, float("inf"))
