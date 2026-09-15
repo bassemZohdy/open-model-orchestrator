@@ -20,6 +20,7 @@ class Settings(StrictModel):
     model_manifest: str = "models/manifest.json"
     registry_path: str = "config/registry.yaml"
     access_policy_path: str | None = None
+    budget_db_path: str | None = None
     registry_reload_enabled: bool = False
     registry_max_age_seconds: int = Field(default=86400, ge=60, le=604800)
     threads: int = Field(default=4, ge=1, le=8)
@@ -71,6 +72,7 @@ def load_settings(path: str | None = None, overrides: dict[str, Any] | None = No
             "model_manifest",
             "registry_path",
             "access_policy_path",
+            "budget_db_path",
             "schema_version",
         }:
             values[name] = value
