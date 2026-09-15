@@ -16,10 +16,12 @@ export OMO_ACCESS_POLICY_PATH=config/access.yaml
 
 An enabled caller with external budget must list exact provider hostnames in
 `allowed_hosts`. Retention is filtered against the registry entry, and the
-per-caller daily budget is enforced by bounded in-memory reservations. Because
-the current runtime is stateless and single-process, these reservations are
-not a durable accounting system and must not be used as production billing
-reconciliation.
+per-caller daily budget is enforced by bounded reservations. For local restart
+durability, set `OMO_BUDGET_DB_PATH` to a dedicated SQLite file. SQLite
+transactions are safe for processes on one node, but this is not a managed
+multi-instance ledger and must not be used as production billing
+reconciliation. Use a shared managed store before horizontally scaling the
+service.
 
 Only a caller with `role: admin` may reload the registry when access-policy
 authentication is enabled. Keep the policy file outside the image and never
