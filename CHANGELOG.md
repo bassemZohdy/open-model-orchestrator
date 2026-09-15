@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No unreleased changes.
+
+## 0.1.0 development follow-up — 2026-09-14
+
 - Added offline OMO-008 training preparation with locked model/dataset lineage,
   export/quantization targets and rollback requirements; training execution,
   export and promotion remain disabled.
@@ -16,13 +20,15 @@
   estimates. Request-time discovery and downloads remain disabled.
 - Verified the issue-first Codex/Claude workflow on reviewed PR #10; Claude
   reported no findings and the PR passed all required CI jobs before merge.
+- Merged the OMO-008–OMO-011 offline foundations in PR #11 after a clean Claude
+  review and passing required CI, including native AMD64 and ARM64 validation.
 - Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
 - Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
 - Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.
 - Added typed model-proposed helper arguments with the same strict schemas as explicit helper requests; untyped or incomplete proposals fail closed.
 - Added predeclared cross-model evaluation gates, a disabled HF publication identity contract, security-report validation, and evidence-bound multi-platform promotion validation. External account, signing and security findings remain release blockers.
 
-## Unreleased — reviewer workflow hardening
+## 0.1.0 reviewer workflow hardening — 2026-09-13
 
 - Consolidated Claude into one review-only PR workflow; removed the comment-driven assistant (manual retry remains available through Actions).
 - Added draft/fork/actor guards, a specific Codex bot allowance without bypassing write-access checks, immutable action refs, credential-free checkout, timeout/turn bounds and per-PR cancellation.

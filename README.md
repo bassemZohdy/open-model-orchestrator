@@ -78,6 +78,7 @@ uv run --no-sync mypy
 uv run --no-sync pytest -m 'not model' -q
 uv run --no-sync pytest -m model -q
 uv run --no-sync python evaluation/run.py --output evaluation/results-local/evaluation.json
+uv run --no-sync python evaluation/dataset.py --validate-outcomes evaluation/outcomes.example.jsonl
 uv run --no-sync python scripts/check_evaluation_contract.py
 uv run --no-sync python scripts/check_publication_contract.py
 uv run --no-sync python scripts/check_training_contract.py

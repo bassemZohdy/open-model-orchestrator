@@ -60,7 +60,9 @@ operation remains protected release-environment work.
 
 Local regression tests verify documentation-only, runtime, dependency,
 Docker/model/evaluation, release-only, workflow, unknown, multi-commit, rename,
-deletion, manual and release-selection contracts. The resulting PR must still
-be verified on its actual head with GitHub Actions, including native
-AMD64/ARM64 container acceptance and the independent Claude review. A local
-green test does not claim those remote checks passed.
+deletion, manual and release-selection contracts. PR #11 was verified on its
+actual head by [OMO validation run 34803105374](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105374),
+including checks, secret scanning, real-model validation and native AMD64/ARM64
+container acceptance. [Claude Code Review run 34803105474](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105474)
+completed successfully with no findings. Future PRs must receive the same
+remote verification; a local green test does not claim those checks passed.
