@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added an offline held-out routing evaluator for helper selection, exact argument fidelity, result interpretation and routing contention. It fails closed on missing/unknown observations and does not use protected-test data, provider calls or confidence for authorization.
 - Added the manual-only OMO-014 training preflight workflow with exact code, dataset and base-model revisions, bounded execution inputs, concurrency cancellation, locked dependencies, resume identifiers and a dry-run-only fail-closed boundary. HF Job execution, checkpoint publication and promotion remain disabled.
 - Completed the OMO-012 routing-classification contract: runtime and training
   now share one bounded instruction, serializer, label set and proposal schema.
