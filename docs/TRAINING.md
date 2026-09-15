@@ -35,9 +35,9 @@ not a trained-model result.
 
 The manual-only [training workflow](../.github/workflows/training.yml) is a protected preflight, not an execution switch. Dispatch it from main with exact 40-character code, dataset and base-model revisions plus the method, hardware, timeout, maximum cost, backend and optional resume-run identifier. It checks out the exact code, runs `uv sync --locked`, validates the offline lineage plan and then stops. Concurrency cancels an older preflight for the same code revision.
 
-The workflow accepts only `dry_run: true`; it does not create an HF Job, upload checkpoints, publish a model or promote an alias. A future HF Job dispatch still requires the protected `training` environment, owner-approved spend/credits, scoped credentials and the larger reviewed OMO-013 corpus. The current source produces only four trainable
-classification records. Enabling execution requires a materially larger
-reviewed corpus, a separately reviewed isolated environment, locked
-Transformers/PyTorch/TRL dependencies, Trackio monitoring, a full-versus-
-adapter comparison, protected held-out evaluation, artifact signing and an
-owner-approved budget.
+The workflow accepts only `dry_run: true`; it does not create an HF Job, upload checkpoints, publish a model or promote an alias. A future HF Job dispatch still requires the protected `training` environment, owner-approved spend/credits, scoped credentials and the larger reviewed OMO-013 corpus. The expanded local source currently produces 14 trainable
+classification records. They remain bootstrap-labeled and pending human review.
+Enabling execution still requires a materially larger reviewed corpus, a
+separately reviewed isolated environment, locked Transformers/PyTorch/TRL
+dependencies, Trackio monitoring, a full-versus-adapter comparison, protected
+held-out evaluation, artifact signing and an owner-approved budget.

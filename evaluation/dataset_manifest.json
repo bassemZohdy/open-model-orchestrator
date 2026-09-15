@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "dataset_id": "omo-routing-synthetic",
+  "source_path": "evaluation/seed.jsonl",
+  "source": "omo-original-synthetic",
+  "license": "Apache-2.0",
+  "revision_kind": "sha256",
+  "revision": "896d92c892c6cc951e73bbb184b1a59f0fa50f4831cc3c831360b5107d39e5f7",
+  "record_count": 52,
+  "splits": {
+    "development": 4,
+    "validation": 12,
+    "calibration": 10,
+    "train": 14,
+    "test": 12
+  },
+  "protected_split": "test",
+  "protected_test_not_in_training": true,
+  "label_status": "bootstrap labels; pending human review",
+  "publication_status": "local-only; Hub publication blocked"
+}

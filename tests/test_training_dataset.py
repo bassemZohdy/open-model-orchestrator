@@ -14,10 +14,20 @@ def test_training_builder_uses_exact_runtime_contract_and_excludes_policy_action
         "omo-016",
         "omo-017",
         "omo-018",
+        "omo-031",
+        "omo-032",
+        "omo-033",
+        "omo-034",
+        "omo-035",
+        "omo-036",
+        "omo-037",
+        "omo-038",
+        "omo-039",
+        "omo-040",
     ]
     assert all(record.objective == CLASSIFICATION_OBJECTIVE_ID for record in records)
     assert all(record.prompt[0].content == ANALYSIS_INSTRUCTION for record in records)
-    assert manifest["records"] == 4
+    assert manifest["records"] == 14
     assert manifest["protected_test_included"] is False
 
     helper = next(record for record in records if record.source_record_id == "omo-018")
