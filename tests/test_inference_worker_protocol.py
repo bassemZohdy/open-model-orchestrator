@@ -39,3 +39,8 @@ def test_worker_protocol_accepts_only_bounded_messages():
 )
 def test_worker_protocol_rejects_malformed_or_wrongly_typed_input(line):
     assert _parse_request(line) is None
+
+
+def test_worker_protocol_rejects_duplicate_json_keys():
+    line = '{"messages":[{"role":"user","content":"hello"}],"max_tokens":32,"max_tokens":256}'
+    assert _parse_request(line) is None
