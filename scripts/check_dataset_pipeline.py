@@ -6,6 +6,9 @@ import json
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -14,9 +17,45 @@ from evaluation.build_dataset import build_dataset  # noqa: E402
 from evaluation.dataset import validate  # noqa: E402
 
 SOURCE = ROOT / "evaluation/seed.jsonl"
+MANIFEST = ROOT / "evaluation/dataset_manifest.yaml"
+
+
+def _validate_manifest() -> dict[str, Any]:
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        raise ValueError("dataset manifest must be a mapping")
+    if manifest.get("schema_version") != "1":
+        raise ValueError("dataset manifest schema is not supported")
+    if manifest.get("objective") != "omo-routing-classification-v1":
+        raise ValueError("dataset objective is not pinned")
+    source = manifest.get("source")
+    if not isinstance(source, dict):
+        raise ValueError("dataset source is required")
+    if source != {
+        "path": "evaluation/seed.jsonl",
+        "name": "omo-original-synthetic",
+        "license": "Apache-2.0",
+    }:
+        raise ValueError("dataset source or license changed")
+    if manifest.get("training_splits") != ["train"]:
+        raise ValueError("only the train split may be emitted")
+    if manifest.get("protected_test_split") != "test":
+        raise ValueError("protected test split is not pinned")
+    output = manifest.get("output")
+    if output != {
+        "format": "canonical-jsonl",
+        "record_order": "id-ascending",
+        "card_filename": "DATASET_CARD.json",
+    }:
+        raise ValueError("dataset output format is not pinned")
+    publication = manifest.get("publication")
+    if publication != {"hub_revision_required": True, "status": "blocked-pending-omo-006"}:
+        raise ValueError("dataset publication must remain blocked")
+    return manifest
 
 
 def main() -> None:
+    _validate_manifest()
     with tempfile.TemporaryDirectory(prefix="omo-dataset-") as temporary:
         root = Path(temporary)
         first_output = root / "first" / "train.jsonl"
