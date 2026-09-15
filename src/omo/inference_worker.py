@@ -20,13 +20,18 @@ def _object_without_duplicates(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 
 def _parse_request(line: str) -> dict[str, Any] | None:
-    if not line or len(line.encode()) > 65536:
+    try:
+        if not line or len(line.encode("utf-8")) > 65536:
+            return None
+    except UnicodeEncodeError:
         return None
     try:
         request = json.loads(line, object_pairs_hook=_object_without_duplicates)
     except (TypeError, ValueError):
         return None
     if not isinstance(request, dict):
+        return None
+    if set(request) - {"messages", "max_tokens", "schema", "count_only"}:
         return None
     messages = request.get("messages")
     if not isinstance(messages, list) or not 1 <= len(messages) <= 24:

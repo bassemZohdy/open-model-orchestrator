@@ -44,3 +44,8 @@ def test_worker_protocol_rejects_malformed_or_wrongly_typed_input(line):
 def test_worker_protocol_rejects_duplicate_json_keys():
     line = '{"messages":[{"role":"user","content":"hello"}],"max_tokens":32,"max_tokens":256}'
     assert _parse_request(line) is None
+
+
+def test_worker_protocol_rejects_unknown_fields_and_invalid_unicode():
+    assert _parse_request(valid_request(unexpected="ignored")) is None
+    assert _parse_request("\ud800") is None
