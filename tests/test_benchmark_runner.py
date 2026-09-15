@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from benchmarks.runner import BenchmarkManifest, load_manifest, dry_run_plan
+from benchmarks.runner import BenchmarkManifest, dry_run_plan, load_manifest
 
 
 REVISION = "a" * 40
