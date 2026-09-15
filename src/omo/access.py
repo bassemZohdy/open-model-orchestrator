@@ -3,7 +3,9 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import math
 import re
+import sqlite3
 import threading
 from datetime import UTC, date, datetime
 from typing import Literal, Self
@@ -81,19 +83,65 @@ class AccessStore:
 
 
 class BudgetLedger:
-    """Bounded in-memory reservations; no prompt or provider response is retained."""
+    """Bounded budget reservations with optional durable local persistence.
 
-    def __init__(self) -> None:
+    The SQLite mode survives process restarts and uses an immediate transaction
+    for multi-process correctness on one node. It is not a replacement for a
+    managed distributed ledger or provider-billing reconciliation.
+    """
+
+    def __init__(self, db_path: str | None = None) -> None:
         self._reservations: dict[tuple[str, date], float] = {}
         self._lock = threading.Lock()
+        self._db: sqlite3.Connection | None = None
+        if db_path:
+            self._db = sqlite3.connect(
+                db_path, timeout=5, isolation_level=None, check_same_thread=False
+            )
+            self._db.execute("PRAGMA journal_mode=WAL")
+            self._db.execute(
+                "CREATE TABLE IF NOT EXISTS budget_reservations "
+                "(caller_id TEXT NOT NULL, reservation_day TEXT NOT NULL, "
+                "amount REAL NOT NULL, PRIMARY KEY (caller_id, reservation_day))"
+            )
+
+    def close(self) -> None:
+        if self._db is not None:
+            self._db.close()
+            self._db = None
 
     def reserve(self, caller: Caller, amount: float, now: datetime | None = None) -> bool:
+        if not math.isfinite(amount) or amount < 0:
+            return False
         if caller.daily_budget_usd is None:
             return True
         current_time = datetime.now(UTC) if now is None else now
         day = current_time.date()
         key = (caller.id, day)
         with self._lock:
+            if self._db is not None:
+                try:
+                    self._db.execute("BEGIN IMMEDIATE")
+                    row = self._db.execute(
+                        "SELECT amount FROM budget_reservations "
+                        "WHERE caller_id = ? AND reservation_day = ?",
+                        (caller.id, day.isoformat()),
+                    ).fetchone()
+                    reserved = float(row[0]) if row else 0.0
+                    if reserved + amount > caller.daily_budget_usd:
+                        self._db.rollback()
+                        return False
+                    self._db.execute(
+                        "INSERT INTO budget_reservations(caller_id, reservation_day, amount) "
+                        "VALUES (?, ?, ?) ON CONFLICT(caller_id, reservation_day) "
+                        "DO UPDATE SET amount = excluded.amount",
+                        (caller.id, day.isoformat(), reserved + amount),
+                    )
+                    self._db.commit()
+                    return True
+                except sqlite3.Error:
+                    self._db.rollback()
+                    return False
             self._reservations = {
                 item: value for item, value in self._reservations.items() if item[1] == day
             }
@@ -107,6 +155,12 @@ class BudgetLedger:
         current_time = datetime.now(UTC) if now is None else now
         day = current_time.date()
         with self._lock:
+            if self._db is not None:
+                rows = self._db.execute(
+                    "SELECT caller_id, amount FROM budget_reservations WHERE reservation_day = ?",
+                    (day.isoformat(),),
+                ).fetchall()
+                return {str(caller): float(amount) for caller, amount in rows}
             return {
                 caller: amount
                 for (caller, reservation_day), amount in self._reservations.items()

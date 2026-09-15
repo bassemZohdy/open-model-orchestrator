@@ -153,7 +153,7 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
     access_store = (
         AccessStore.read(settings.access_policy_path) if settings.access_policy_path else None
     )
-    budget_ledger = BudgetLedger()
+    budget_ledger = BudgetLedger(settings.budget_db_path)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -180,6 +180,7 @@ def create_app(settings: Settings | None = None, service: Orchestrator | None = 
         finally:
             await provider.close()
             await model.close()
+            budget_ledger.close()
 
     app = FastAPI(
         title="Open Model Orchestrator",

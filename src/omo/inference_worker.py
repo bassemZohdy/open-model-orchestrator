@@ -10,11 +10,20 @@ from llama_cpp import Llama
 from llama_cpp.llama_grammar import LlamaGrammar
 
 
+def _object_without_duplicates(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key")
+        result[key] = value
+    return result
+
+
 def _parse_request(line: str) -> dict[str, Any] | None:
     if not line or len(line.encode()) > 65536:
         return None
     try:
-        request = json.loads(line)
+        request = json.loads(line, object_pairs_hook=_object_without_duplicates)
     except (TypeError, ValueError):
         return None
     if not isinstance(request, dict):
