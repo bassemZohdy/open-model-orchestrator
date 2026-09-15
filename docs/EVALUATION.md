@@ -11,3 +11,16 @@ Always-local baseline: two SmolLM2 Q8 candidates were actually run on the same f
 RouteLLM and RouterBench provide prior art and possible data sources, not today's provider ranking. RouterBench HF card lacks a clear license declaration in the inspected artifact. Do not import its historical outcomes as modern selection labels or assume the source benchmark licenses are interchangeable. Exact artifact/license/schema review is required before import.
 
 `training/sft.py --dry-run` validates the data and describes a bounded experiment. **It does not implement SFT execution, export or quantization.** These remain OMO-008. Full fine-tuning is the first proposed small-model baseline; adapters must earn their complexity in measurements. There are no remote-job calls, schedules, automatic fine-tunes or model promotions anywhere in runtime. Any future paid job requires an approved budget/timeout, isolated training dependencies, export checks and held-out safety/quality gates before deployment.
+
+
+## Held-out routing contract
+
+`evaluation/heldout.jsonl` contains four small, repository-owned scenarios for helper selection, exact helper argument fidelity, result interpretation and policy-owned routing contention. The evaluator in `evaluation/heldout.py` compares an observed decision record with the expected action and category-specific gate. It reports per-category accuracy, fails on missing or unknown observations, and records that no protected test split, provider call or confidence-based authorization was used.
+
+Validate only the case contract in CI:
+
+```bash
+uv run --no-sync python evaluation/heldout.py --validate-cases
+```
+
+A future model-backed run must supply observations from an approved immutable revision and separately reviewed corpus. These four scenarios are harness coverage, not evidence for corpus quality, calibration, or production routing.
