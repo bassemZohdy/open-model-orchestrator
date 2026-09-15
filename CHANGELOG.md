@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added offline evaluation governance for fixed-provider batch lineage, source/license audits, selective risk/coverage calibration and the omo-human-review-v1 protocol. Live-provider calls, protected-test evaluation and promotion remain disabled.
 - Added an OMO-003 benchmark preflight planner that requires exact code, dataset and candidate model revisions, the five comparison roles, llama.cpp Q4/Q8 candidates and a separate Transformers fp16 CPU reference. It prints a deterministic dry-run only; model downloads, sweeps, provider calls and promotion remain disabled.
 - Added an offline held-out routing evaluator for helper selection, exact argument fidelity, result interpretation and routing contention. It fails closed on missing/unknown observations and does not use protected-test data, provider calls or confidence for authorization.
 - Added the manual-only OMO-014 training preflight workflow with exact code, dataset and base-model revisions, bounded execution inputs, concurrency cancellation, locked dependencies, resume identifiers and a dry-run-only fail-closed boundary. HF Job execution, checkpoint publication and promotion remain disabled.

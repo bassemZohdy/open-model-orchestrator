@@ -27,3 +27,6 @@ A future model-backed run must supply observations from an approved immutable re
 
 
 The OMO-003 [benchmark preflight](BENCHMARKS.md) requires exact immutable application, dataset and candidate revisions. It separates llama.cpp Q4/Q8 comparisons from a Transformers fp16 CPU reference and emits a dry-run plan only; no weights are downloaded, no provider is called and no model is promoted.
+
+
+The offline evaluation audit and [human-review protocol](EVALUATION_REVIEW.md) now bind source/license provenance, fixed-provider lineage, selective risk/coverage calibration and reviewer decisions into one validated bundle. This remains evidence preparation: no live-provider call, protected-test run or promotion is performed.
