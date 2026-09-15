@@ -90,9 +90,7 @@ def _same_helper(expected: HelperCall | None, actual: HelperCall | None) -> bool
     return expected.model_dump() == actual.model_dump()
 
 
-def evaluate(
-    cases: list[HeldOutCase], observations: list[HeldOutObservation]
-) -> dict[str, object]:
+def evaluate(cases: list[HeldOutCase], observations: list[HeldOutObservation]) -> dict[str, object]:
     case_by_id = {case.id: case for case in cases}
     observation_by_id = {observation.case_id: observation for observation in observations}
     unknown = sorted(set(observation_by_id) - set(case_by_id))
@@ -118,9 +116,7 @@ def evaluate(
                 case.expected_helper, observation.actual_helper
             )
         elif case.category == "result-interpretation":
-            checks["result_interpretation"] = (
-                observation.actual_result == case.expected_result
-            )
+            checks["result_interpretation"] = observation.actual_result == case.expected_result
         else:
             checks["routing_contention"] = observation.actual_reason == case.expected_reason
 
@@ -129,9 +125,7 @@ def evaluate(
         totals["cases"] += 1
         totals["passed"] += int(passed)
         if not passed:
-            failures.append(
-                {"case_id": case.id, "category": case.category, "checks": checks}
-            )
+            failures.append({"case_id": case.id, "category": case.category, "checks": checks})
 
     for totals in category_totals.values():
         totals["accuracy"] = totals["passed"] / totals["cases"]
