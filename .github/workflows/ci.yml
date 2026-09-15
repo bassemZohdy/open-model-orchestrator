@@ -83,3 +83,101 @@ jobs:
       - run: uv run --no-sync python scripts/check_access_contract.py
       - run: uv run --no-sync python scripts/check_publication_contract.py
       - run: uv run --no-sync python scripts/check_release_contract.py
+  real-model:
+    needs: changes
+    if: >-
+      github.repository == 'bassemZohdy/open-model-orchestrator' &&
+      (needs.changes.outputs.model == 'true' ||
+      github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CC: gcc
+      CXX: g++
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      CMAKE_ARGS: '-DGGML_NATIVE=OFF -DGGML_BLAS=OFF -DGGML_OPENMP=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.12.11'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --no-sync python training/sft.py --dry-run
+      - run: uv run --no-sync python scripts/download_model.py
+      - run: uv run --no-sync pytest -m model -q
+      - run: uv run --no-sync python evaluation/run.py --output evidence/evaluation.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: real-model-evidence
+          path: evidence/
+          retention-days: 14
+  native-container:
+    needs: [changes, checks, secrets]
+    if: needs.changes.outputs.container == 'true' || inputs.strict_security
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          target: bundled
+          load: true
+          push: false
+          tags: omo-test:${{ matrix.arch }}
+          cache-from: type=gha,scope=omo-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=omo-${{ matrix.arch }}
+      - name: Offline native container acceptance
+        run: |
+          mkdir -p evidence
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --memory 1536m --pids-limit 128 --cpus 4 --tmpfs /tmp:rw,noexec,nosuid,size=16m --entrypoint python omo-test:${{ matrix.arch }} scripts/container_smoke.py | tee evidence/container-${{ matrix.arch }}.txt
+          docker image inspect omo-test:${{ matrix.arch }} --format '{{json .}}' > evidence/image-${{ matrix.arch }}.json
+          docker save omo-test:${{ matrix.arch }} | gzip -n > /tmp/omo-image.tar.gz
+          stat --format='%s' /tmp/omo-image.tar.gz > evidence/docker-save-gzip-bytes-${{ matrix.arch }}.txt
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('evidence')
+          for path in root.glob('image-*.json'):
+              data=json.loads(path.read_text())
+              size=root/('docker-save-gzip-bytes-'+data['Architecture']+'.txt')
+              print(json.dumps({'image_id':data['Id'],'architecture':data['Architecture'],'unpacked_bytes':data['Size'],'docker_save_gzip_bytes':int(size.read_text()),'registry_published':False}))
+          PY
+      - name: Container vulnerability report
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: omo-test:${{ matrix.arch }}
+          format: json
+          output: evidence/trivy-${{ matrix.arch }}.json
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+      - name: Report findings; block release-mode validation on any high/critical issue
+        env:
+          STRICT_SECURITY: ${{ inputs.strict_security }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          if [ "$STRICT_SECURITY" = "true" ]; then
+            python scripts/check_security_report.py --report "evidence/trivy-$ARCH.json" --strict
+          else
+            python scripts/check_security_report.py --report "evidence/trivy-$ARCH.json"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: container-evidence-${{ matrix.arch }}
+          path: evidence/
+          retention-days: 14
