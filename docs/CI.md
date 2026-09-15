@@ -36,6 +36,8 @@ The lightweight checks also validate the original dataset, outcome schema,
 training preparation contract and access-policy contract. These checks do not
 download third-party benchmarks, invoke live providers or enable training.
 
+The separate `OMO manual training preflight` workflow has only a manual `workflow_dispatch` trigger. It checks exact immutable revisions and bounded method/hardware/timeout/cost/resume inputs under the protected `training` environment, uses the locked dependency sync and dry-run planner, and exits before any remote HF Job, checkpoint upload or promotion. It has no schedule, pull-request trigger or publication permission.
+
 ## Security, evaluation and publication contracts
 
 Native Trivy reports are passed through scripts/check_security_report.py.
