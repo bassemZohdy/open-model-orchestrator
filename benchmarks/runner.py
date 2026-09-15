@@ -69,7 +69,7 @@ class BenchmarkManifest(StrictModel):
             "qwen",
             "transformers-cpu-reference",
         }
-        if roles != required:
+        if len(self.candidates) != len(required) or roles != required:
             raise ValueError("manifest must contain exactly the five comparison roles")
         return self
 
