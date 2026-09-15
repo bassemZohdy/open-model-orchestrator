@@ -1,0 +1,40 @@
+schema_version: "1"
+objective: omo-routing-classification-v1
+model_output:
+  kind: proposal
+  schema: Proposal
+  actions: [external_model, helper, clarify]
+  capabilities: [text, coding, current_information]
+  includes_typed_helper_arguments: true
+deterministic_boundary:
+  actions: [local_answer, reject]
+  model_output_is_authoritative: false
+  owns:
+    - target_eligibility
+    - authorization
+    - policy_denials
+    - execution
+multi_turn:
+  serialization: ordered-json-messages-v1
+  include_roles: true
+  preserve_order: true
+  preserve_system_message: true
+  max_messages: 24
+invalid_examples:
+  - malformed_json
+  - duplicate_keys
+  - extra_field
+  - unknown_action
+  - unknown_capability
+  - helper_without_typed_arguments
+  - external_model_with_helper_arguments
+  - ambiguous_reference
+  - missing_final_user_turn
+record_separation:
+  classification_expected_actions: [external_model, helper, clarify]
+  local_answer_expected_actions: [local_answer]
+  local_answer_records_in_classification_training: false
+training:
+  enabled: false
+  execution: dry-run-only
+  max_cost_usd: 0
