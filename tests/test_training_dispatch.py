@@ -2,7 +2,6 @@ import pytest
 
 from scripts.check_training_dispatch import validate
 
-
 REVISION = "a" * 40
 
 
