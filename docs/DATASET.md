@@ -2,9 +2,11 @@
 
 OMO uses only original synthetic JSONL in
 [`evaluation/seed.jsonl`](../evaluation/seed.jsonl). Every record is bound to
-`omo-original-synthetic` and Apache-2.0 by the strict schema. The current
-corpus contains 30 records across development, validation, calibration, train
-and protected test splits.
+`omo-original-synthetic` and Apache-2.0 by the strict schema. The expanded
+local corpus contains 52 records: 4 development, 12 validation, 10
+calibration, 14 train and 12 protected test records. The content revision is
+pinned by [`evaluation/dataset_manifest.json`](../evaluation/dataset_manifest.json)
+and described in the [dataset card](../evaluation/DATASET_CARD.md).
 
 Validation enforces unique IDs, family-level split isolation, duplicate prompt
 content rejection and near-duplicate detection across splits. Protected test
