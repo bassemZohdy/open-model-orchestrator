@@ -4,7 +4,6 @@ import pytest
 
 from benchmarks.runner import BenchmarkManifest, dry_run_plan, load_manifest
 
-
 REVISION = "a" * 40
 DATASET_REVISION = "b" * 40
 ROLES = (
