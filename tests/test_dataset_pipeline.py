@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from evaluation.build_dataset import build_dataset
 from evaluation.dataset import validate
+import pytest
 
 
 SOURCE = Path("evaluation/seed.jsonl")
