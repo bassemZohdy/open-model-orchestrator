@@ -2,7 +2,12 @@
 
 ## Unreleased
 
-No unreleased changes.
+- Completed the OMO-012 routing-classification contract: runtime and training
+  now share one bounded instruction, serializer, label set and proposal schema.
+- Added typed source-label validation and a deterministic TRL-compatible
+  prompt/completion builder that excludes policy-owned actions and cannot emit
+  the protected test split. The current four-record output is contract evidence,
+  not a training-ready corpus or trained model.
 
 ## 0.1.0 development follow-up — 2026-09-14
 

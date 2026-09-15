@@ -11,6 +11,13 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from evaluation.dataset import validate  # noqa: E402, I001
+from omo.classification import (  # noqa: E402
+    CLASSIFICATION_OBJECTIVE_ID,
+    POLICY_OWNED_ACTIONS,
+    PROPOSAL_ACTIONS,
+    PROPOSAL_CAPABILITIES,
+)
+from training.dataset import build_sft_records  # noqa: E402
 
 
 DEFAULT_CONFIG = ROOT / "config/training.yaml"
@@ -30,14 +37,32 @@ def load_plan(config_path: Path = DEFAULT_CONFIG) -> dict:
         raise ValueError("unsupported training configuration")
     if config.get("enabled") is not False or config.get("execution") != "dry-run-only":
         raise ValueError("training execution must remain disabled")
+    objective = config.get("objective", {})
+    if objective.get("id") != CLASSIFICATION_OBJECTIVE_ID:
+        raise ValueError("unexpected classification objective")
+    if tuple(objective.get("proposal_actions", ())) != PROPOSAL_ACTIONS:
+        raise ValueError("proposal actions differ from runtime contract")
+    if tuple(objective.get("capabilities", ())) != PROPOSAL_CAPABILITIES:
+        raise ValueError("proposal capabilities differ from runtime contract")
+    if tuple(objective.get("policy_owned_actions", ())) != POLICY_OWNED_ACTIONS:
+        raise ValueError("policy-owned actions differ from runtime contract")
+    if objective.get("local_answer_training") != "excluded":
+        raise ValueError("classification training must exclude local-answer targets")
     dataset = ROOT / config["dataset"]["path"]
     rows, dataset_digest = validate(str(dataset))
+    if config["dataset"].get("training_splits") != ["train"]:
+        raise ValueError("only the train split may be supplied to the training job")
+    if config["dataset"].get("protected_splits") != ["test"]:
+        raise ValueError("test must remain the protected split")
+    training_rows, training_manifest = build_sft_records(dataset)
     return {
         "config": config,
         "config_sha256": _digest(config_path),
         "dataset_sha256": dataset_digest,
         "dataset_records": len(rows),
-        "train_examples": sum(r.split == "train" for r in rows),
+        "train_examples": len(training_rows),
+        "source_records": len(rows),
+        "training_artifact": training_manifest,
         "base_model": config["base_model"],
     }
 
@@ -66,6 +91,8 @@ def main() -> None:
                 "dataset_sha256": plan["dataset_sha256"],
                 "dataset_records": plan["dataset_records"],
                 "train_examples": plan["train_examples"],
+                "classification_objective": plan["config"]["objective"],
+                "training_artifact": plan["training_artifact"],
                 "base_model": plan["base_model"],
                 "proposal": {
                     "method": "full supervised fine-tuning baseline before comparing adapters",

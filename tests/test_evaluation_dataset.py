@@ -1,6 +1,12 @@
 import pytest
 
-from evaluation.dataset import OutcomeRecord, selective_curve, validate, validate_outcomes
+from evaluation.dataset import (
+    IntentRecord,
+    OutcomeRecord,
+    selective_curve,
+    validate,
+    validate_outcomes,
+)
 
 
 def test_dataset_rejects_duplicate_prompt_content(tmp_path):
@@ -43,4 +49,44 @@ def test_outcome_model_rejects_unbounded_values():
             latency_ms=-1,
             confidence=0.5,
             timestamp="now",
+        )
+
+
+def test_model_routed_record_requires_a_matching_proposal():
+    common = {
+        "id": "one",
+        "family": "one",
+        "split": "train",
+        "language": "en",
+        "messages": [{"role": "user", "content": "Write an email"}],
+        "required_capability": "text",
+        "expected_action": "external_model",
+    }
+    with pytest.raises(ValueError, match="requires expected_proposal"):
+        IntentRecord.model_validate(common)
+    with pytest.raises(ValueError, match="capability mismatch"):
+        IntentRecord.model_validate(
+            {
+                **common,
+                "expected_proposal": {
+                    "action": "external_model",
+                    "capability": "coding",
+                },
+            }
+        )
+
+
+def test_policy_owned_record_rejects_a_model_proposal():
+    with pytest.raises(ValueError, match="policy-owned action"):
+        IntentRecord.model_validate(
+            {
+                "id": "one",
+                "family": "one",
+                "split": "validation",
+                "language": "en",
+                "messages": [{"role": "user", "content": "unsafe"}],
+                "required_capability": "text",
+                "expected_action": "reject",
+                "expected_proposal": {"action": "clarify", "capability": "text"},
+            }
         )
