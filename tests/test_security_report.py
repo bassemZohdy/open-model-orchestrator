@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -38,3 +39,11 @@ def test_malformed_security_report_is_rejected(tmp_path):
     path.write_text(json.dumps(report(vulnerability(PkgName=None))))
     with pytest.raises(ValueError, match="malformed"):
         validate(path)
+
+
+def test_diskcache_vex_remains_pending_and_blocked():
+    vex = json.loads(Path("docs/evidence/diskcache-vex.json").read_text())
+
+    assert vex["status"] == "pending-owner-approval"
+    assert vex["advisory"]["fixed_versions"] == []
+    assert vex["release_disposition"] == "blocked"
