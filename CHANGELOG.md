@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added the manual-only OMO-014 training preflight workflow with exact code, dataset and base-model revisions, bounded execution inputs, concurrency cancellation, locked dependencies, resume identifiers and a dry-run-only fail-closed boundary. HF Job execution, checkpoint publication and promotion remain disabled.
 - Completed the OMO-012 routing-classification contract: runtime and training
   now share one bounded instruction, serializer, label set and proposal schema.
 - Added typed source-label validation and a deterministic TRL-compatible
