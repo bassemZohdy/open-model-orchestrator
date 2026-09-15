@@ -24,3 +24,6 @@ uv run --no-sync python evaluation/heldout.py --validate-cases
 ```
 
 A future model-backed run must supply observations from an approved immutable revision and separately reviewed corpus. These four scenarios are harness coverage, not evidence for corpus quality, calibration, or production routing.
+
+
+The OMO-003 [benchmark preflight](BENCHMARKS.md) requires exact immutable application, dataset and candidate revisions. It separates llama.cpp Q4/Q8 comparisons from a Transformers fp16 CPU reference and emits a dry-run plan only; no weights are downloaded, no provider is called and no model is promoted.
