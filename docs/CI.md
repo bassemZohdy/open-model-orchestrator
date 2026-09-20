@@ -63,9 +63,9 @@ operation remains protected release-environment work.
 
 Local regression tests verify documentation-only, runtime, dependency,
 Docker/model/evaluation, release-only, workflow, unknown, multi-commit, rename,
-deletion, manual and release-selection contracts. PR #11 was verified on its
-actual head by [OMO validation run 34803105374](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105374),
-including checks, secret scanning, real-model validation and native AMD64/ARM64
-container acceptance. [Claude Code Review run 34803105474](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105474)
-completed successfully with no findings. Future PRs must receive the same
-remote verification; a local green test does not claim those checks passed.
+deletion, manual and release-selection contracts. Historical PR #11 passed the
+same remote validation. The latest cleanup PR [#23](https://github.com/bassemZohdy/open-model-orchestrator/pull/23)
+passed [OMO validation run 35513626343](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35513626343)
+and [Claude Code Review run 35513626348](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35513626348)
+before merging into `main`. Future PRs must receive the same remote
+verification; a local green test does not claim those checks passed.

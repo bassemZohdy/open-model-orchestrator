@@ -30,6 +30,10 @@
 - Added the disabled OMO-016 model-promotion manifest and trusted build-time
   materializer. It verifies an immutable Hub revision, filename, size and
   SHA-256 before replacement; request-time model downloads remain impossible.
+- Added the OMO-015 candidate-artifact validator. It verifies safetensors,
+  tokenizer, configuration and model-card files, exact checksums, training
+  lineage, held-out evidence, license provenance and the upstream rollback
+  target before publication.
 - Added restart-durable local budget reservations and fail-closed native parser
   hardening; distributed accounting, provider reconciliation and independent
   security review remain deployment/release work.

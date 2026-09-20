@@ -20,6 +20,13 @@ Training preparation is separately lineage-bound in
 cannot create a publishable model artifact until the training, export,
 quantization, evaluation and signing gates are independently approved.
 
+Before an approved model can enter the promotion boundary,
+[`scripts/check_model_artifact.py`](../scripts/check_model_artifact.py) validates
+the complete bundle offline. The manifest must bind safetensors weights, the
+tokenizer/template, configuration, model card, exact file checksums, code and
+dataset lineage, measured held-out evidence, license provenance and the
+upstream rollback revision. It never downloads, trains or publishes anything.
+
 The disabled-by-default [`config/model-promotion.yaml`](../config/model-promotion.yaml)
 defines the next boundary: an approved fine-tuned revision must be pinned by
 Hub repository, immutable revision, filename, format, template, size and
