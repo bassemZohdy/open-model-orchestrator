@@ -7,7 +7,10 @@ The repository includes machine-checkable contracts for OMO-006 and OMO-007:
 - `scripts/check_publication_contract.py` rejects model relabeling and identity
   drift without contacting Hugging Face.
 - `scripts/promote_release.py` requires matching native AMD64 and ARM64
-  candidates plus passed security, SBOM, provenance and signature evidence.
+  candidates plus structured, digest-bound security, SBOM, provenance and
+  signature evidence. Evidence must identify the source commit, image digest,
+  signing identity and issuer for each platform; standalone verification
+  booleans are rejected.
 
 These checks do not create Hugging Face repositories, upload data, sign OCI
 images or move registry aliases. Those actions require owner-controlled

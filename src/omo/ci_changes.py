@@ -215,7 +215,8 @@ def select(base: str | None, head: str | None, force_full: bool = False) -> dict
     """Select suites and fail safe when the event cannot provide a valid diff."""
     if force_full or _is_missing_revision(base) or _is_missing_revision(head):
         return dict(FULL_VALIDATION)
-    assert base is not None and head is not None
+    if base is None or head is None:
+        return dict(FULL_VALIDATION)
     try:
         return classify(changed_paths(base, head))
     except (OSError, ValueError, subprocess.CalledProcessError):

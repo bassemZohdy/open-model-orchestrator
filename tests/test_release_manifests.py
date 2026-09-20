@@ -43,10 +43,52 @@ def test_promotion_requires_complete_matching_candidates(tmp_path: Path) -> None
     amd64 = _candidate("amd64")
     arm64 = _candidate("arm64")
     evidence = {
-        "security_audit": "passed",
-        "sbom_verified": True,
-        "provenance_verified": True,
-        "signatures_verified": True,
+        "schema_version": "1",
+        "security_audit": {"status": "passed", "report_sha256": "1" * 64},
+        "platforms": {
+            "linux/amd64": {
+                "sbom": {
+                    "verified": True,
+                    "sha256": "2" * 64,
+                    "format": "spdx-json",
+                    "image_digest": "sha256:" + "a" * 64,
+                },
+                "provenance": {
+                    "verified": True,
+                    "sha256": "3" * 64,
+                    "builder": "github-actions",
+                    "source_commit": "a" * 40,
+                    "image_digest": "sha256:" + "a" * 64,
+                },
+                "signature": {
+                    "verified": True,
+                    "identity": "release-workflow",
+                    "issuer": "sigstore",
+                    "subject": "sha256:" + "a" * 64,
+                },
+            },
+            "linux/arm64": {
+                "sbom": {
+                    "verified": True,
+                    "sha256": "2" * 64,
+                    "format": "spdx-json",
+                    "image_digest": "sha256:" + "a" * 64,
+                },
+                "provenance": {
+                    "verified": True,
+                    "sha256": "3" * 64,
+                    "builder": "github-actions",
+                    "source_commit": "a" * 40,
+                    "image_digest": "sha256:" + "a" * 64,
+                },
+                "signature": {
+                    "verified": True,
+                    "identity": "release-workflow",
+                    "issuer": "sigstore",
+                    "subject": "sha256:" + "a" * 64,
+                },
+            },
+        },
     }
 
     amd64_path = tmp_path / "amd64.json"

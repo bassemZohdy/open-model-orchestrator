@@ -34,6 +34,103 @@ def _required_string(
     return value
 
 
+def _required_object(value: Any, field: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"release evidence field {field} must be an object")
+    return value
+
+
+def _required_sha256(value: Any, field: str) -> str:
+    if not isinstance(value, str) or SHA256_PATTERN.fullmatch(value) is None:
+        raise ValueError(f"release evidence field {field} must be a SHA-256 digest")
+    return value
+
+
+def _required_true(value: Any, field: str) -> None:
+    if value is not True:
+        raise ValueError(f"release evidence field {field} must be true")
+
+
+def _validate_evidence(evidence: dict[str, Any], manifests: list[dict[str, Any]]) -> dict[str, Any]:
+    """Validate digest-bound evidence produced by an external release verifier.
+
+    The verifier that creates this file remains owner-controlled. This boundary
+    deliberately records the identity and issuer used for signatures instead of
+    accepting standalone booleans that could be detached from the candidates.
+    """
+    if evidence.get("schema_version") != "1":
+        raise ValueError("release evidence schema_version must be 1")
+    security = _required_object(evidence.get("security_audit"), "security_audit")
+    if security.get("status") != "passed":
+        raise ValueError("release security audit is not passed")
+    report_sha256 = _required_sha256(security.get("report_sha256"), "security_audit.report_sha256")
+
+    platform_evidence = _required_object(evidence.get("platforms"), "platforms")
+    expected_platforms = {manifest["platform"] for manifest in manifests}
+    if set(platform_evidence) != expected_platforms:
+        raise ValueError("release evidence must cover exactly both candidate platforms")
+
+    normalized_platforms: dict[str, dict[str, Any]] = {}
+    for manifest in manifests:
+        platform = manifest["platform"]
+        item = _required_object(platform_evidence.get(platform), f"platforms.{platform}")
+        sbom = _required_object(item.get("sbom"), f"platforms.{platform}.sbom")
+        _required_true(sbom.get("verified"), f"platforms.{platform}.sbom.verified")
+        sbom_sha256 = _required_sha256(sbom.get("sha256"), f"platforms.{platform}.sbom.sha256")
+        sbom_format = sbom.get("format")
+        if not isinstance(sbom_format, str) or not sbom_format:
+            raise ValueError(f"platforms.{platform}.sbom.format is required")
+        if sbom.get("image_digest") != manifest["image_digest"]:
+            raise ValueError(f"platforms.{platform}.sbom.image_digest does not match image")
+
+        provenance = _required_object(item.get("provenance"), f"platforms.{platform}.provenance")
+        _required_true(provenance.get("verified"), f"platforms.{platform}.provenance.verified")
+        provenance_sha256 = _required_sha256(
+            provenance.get("sha256"), f"platforms.{platform}.provenance.sha256"
+        )
+        builder = provenance.get("builder")
+        if not isinstance(builder, str) or not builder:
+            raise ValueError(f"platforms.{platform}.provenance.builder is required")
+        if provenance.get("source_commit") != manifest["code_commit"]:
+            raise ValueError(f"platforms.{platform}.provenance.source_commit does not match code")
+        if provenance.get("image_digest") != manifest["image_digest"]:
+            raise ValueError(f"platforms.{platform}.provenance.image_digest does not match image")
+
+        signature = _required_object(item.get("signature"), f"platforms.{platform}.signature")
+        _required_true(signature.get("verified"), f"platforms.{platform}.signature.verified")
+        identity = signature.get("identity")
+        issuer = signature.get("issuer")
+        if not isinstance(identity, str) or not identity:
+            raise ValueError(f"platforms.{platform}.signature.identity is required")
+        if not isinstance(issuer, str) or not issuer:
+            raise ValueError(f"platforms.{platform}.signature.issuer is required")
+        if signature.get("subject") != manifest["image_digest"]:
+            raise ValueError(f"platforms.{platform}.signature.subject does not match image")
+
+        normalized_platforms[platform] = {
+            "sbom": {
+                "sha256": sbom_sha256,
+                "format": sbom_format,
+                "image_digest": manifest["image_digest"],
+            },
+            "provenance": {
+                "sha256": provenance_sha256,
+                "builder": builder,
+                "source_commit": manifest["code_commit"],
+                "image_digest": manifest["image_digest"],
+            },
+            "signature": {
+                "identity": identity,
+                "issuer": issuer,
+                "subject": manifest["image_digest"],
+            },
+        }
+    return {
+        "security_audit": {"status": "passed", "report_sha256": report_sha256},
+        "platforms": normalized_platforms,
+    }
+
+
 def _validate_candidate(manifest: dict[str, Any]) -> None:
     _required_string(manifest, "platform")
     _required_string(manifest, "publication_state")
@@ -82,13 +179,7 @@ def build(manifest_paths: list[Path], evidence_path: Path) -> dict[str, Any]:
     for field in identity_fields:
         if any(manifest.get(field) != first.get(field) for manifest in manifests[1:]):
             raise ValueError(f"candidate identity differs for {field}")
-    if evidence != {
-        "security_audit": "passed",
-        "sbom_verified": True,
-        "provenance_verified": True,
-        "signatures_verified": True,
-    }:
-        raise ValueError("release evidence is incomplete or failed")
+    evidence_record = _validate_evidence(evidence, manifests)
     return {
         "schema_version": "1",
         "publication_state": "stable",
@@ -106,12 +197,8 @@ def build(manifest_paths: list[Path], evidence_path: Path) -> dict[str, Any]:
             }
             for manifest in sorted(manifests, key=lambda item: item["platform"])
         ],
-        "security_audit": "passed",
-        "attestations": {
-            "sbom_verified": True,
-            "provenance_verified": True,
-            "signature_verified": True,
-        },
+        "security_audit": evidence_record["security_audit"],
+        "attestations": evidence_record["platforms"],
         "stable_aliases": ["latest", first["requested_release_version"]],
     }
 

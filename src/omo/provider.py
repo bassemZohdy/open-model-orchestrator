@@ -102,9 +102,9 @@ class OpenAIProvider:
                         raise ProviderError(self._status_code(response.status_code), attempt)
                     body = bytearray()
                     async for chunk in response.aiter_bytes(4096):
-                        body.extend(chunk)
-                        if len(body) > self.MAX_RESPONSE_BYTES:
+                        if len(body) + len(chunk) > self.MAX_RESPONSE_BYTES:
                             raise ProviderError("provider_response_too_large", attempt)
+                        body.extend(chunk)
                 result = json.loads(body)
                 choices = result["choices"]
                 if len(choices) != 1 or choices[0]["message"].get("tool_calls"):

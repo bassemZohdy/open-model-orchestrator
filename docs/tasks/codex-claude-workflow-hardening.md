@@ -6,7 +6,7 @@ Status: implemented directly in PR #3 after Codex cloud reported a missing repos
 
 The owner approved fixing this PR directly and trying issue-first delegation later. Consolidated Claude into one automatic PR-review workflow instead of retaining the comment-driven assistant. Manual retries use GitHub Actions **Re-run jobs**; arbitrary comment commands no longer invoke Claude after merge. This supersedes the original two-workflow/manual-mention requirements below.
 
-Review skips drafts and forks, allows only the owner or verified Codex connector actor, pins actions, has a 15-minute timeout, a 20-turn bound, and per-PR cancellation. The OAuth secret is unchanged. Claude is instructed to review only with edit/write tools denied. The installed GitHub App still has broader permissions: these controls are not a standalone security sandbox. The upstream plugin is dynamically fetched, so action pinning does not make the entire toolchain reproducible.
+Review skips drafts and forks, allows only the owner or verified Codex connector actor, pins actions, has a 15-minute timeout, a bounded 40-turn review budget, and per-PR cancellation. The OAuth secret is unchanged. Claude is instructed to perform one review pass and report explicit no-findings when appropriate, with edit/write tools denied. The installed GitHub App still has broader permissions: these controls are not a standalone security sandbox. The upstream plugin is dynamically fetched, so action pinning does not make the entire toolchain reproducible.
 
 Action source: https://github.com/anthropics/claude-code-action/commit/9cdae7f0d995e3ba7c33f226087fdf82a59cd520 (v1 resolved 2026-09-13).
 

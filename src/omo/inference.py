@@ -60,7 +60,9 @@ class LlamaModel:
             close_fds=True,
             limit=65536,
         )
-        assert self.process.stdin and self.process.stdout
+        if self.process.stdin is None or self.process.stdout is None:
+            await self.close()
+            raise OmoError("inference_unavailable", 503)
         config = {
             "path": self.path,
             "context": self.settings.context_tokens,
@@ -94,11 +96,13 @@ class LlamaModel:
             async with self.lock:
                 try:
                     await self._spawn()
-                    assert self.process and self.process.stdin and self.process.stdout
-                    self.process.stdin.write(json.dumps(payload).encode() + b"\n")
-                    await self.process.stdin.drain()
+                    process = self.process
+                    if process is None or process.stdin is None or process.stdout is None:
+                        raise OmoError("inference_unavailable", 503)
+                    process.stdin.write(json.dumps(payload).encode() + b"\n")
+                    await process.stdin.drain()
                     async with asyncio.timeout(self.settings.deadline_seconds):
-                        line = await self.process.stdout.readline()
+                        line = await process.stdout.readline()
                     result: dict[str, Any] = json.loads(line)
                     if "error" in result:
                         raise OmoError(result["error"], 422)
