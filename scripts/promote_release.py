@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import Any
 
 REQUIRED_PLATFORMS = {"linux/amd64", "linux/arm64"}
+DIGEST_PATTERN = re.compile(r"sha256:[0-9a-f]{64}")
+COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
+SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -18,6 +21,35 @@ def _load(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{path} must contain an object")
     return value
+
+
+def _required_string(
+    manifest: dict[str, Any], field: str, pattern: re.Pattern[str] | None = None
+) -> str:
+    value = manifest.get(field)
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"candidate field {field} is required")
+    if pattern is not None and pattern.fullmatch(value) is None:
+        raise ValueError(f"candidate field {field} has an invalid format")
+    return value
+
+
+def _validate_candidate(manifest: dict[str, Any]) -> None:
+    _required_string(manifest, "platform")
+    _required_string(manifest, "publication_state")
+    _required_string(manifest, "requested_release_version")
+    _required_string(manifest, "code_commit", COMMIT_PATTERN)
+    _required_string(manifest, "image")
+    _required_string(manifest, "image_digest", DIGEST_PATTERN)
+    for field in (
+        "dataset_sha256",
+        "evaluation_program_sha256",
+        "policy_sha256",
+        "model_manifest_sha256",
+    ):
+        _required_string(manifest, field, SHA256_PATTERN)
+    if not isinstance(manifest.get("embedded_model"), dict):
+        raise ValueError("candidate field embedded_model must be an object")
 
 
 def build(manifest_paths: list[Path], evidence_path: Path) -> dict[str, Any]:
@@ -29,6 +61,7 @@ def build(manifest_paths: list[Path], evidence_path: Path) -> dict[str, Any]:
     if platforms != REQUIRED_PLATFORMS:
         raise ValueError("stable promotion requires native AMD64 and ARM64 candidates")
     for manifest in manifests:
+        _validate_candidate(manifest)
         if manifest.get("publication_state") != "candidate; stable aliases unchanged":
             raise ValueError("only candidate manifests may be promoted")
         if not re.fullmatch(
@@ -43,6 +76,7 @@ def build(manifest_paths: list[Path], evidence_path: Path) -> dict[str, Any]:
         "dataset_sha256",
         "evaluation_program_sha256",
         "policy_sha256",
+        "model_manifest_sha256",
     )
     first = manifests[0]
     for field in identity_fields:

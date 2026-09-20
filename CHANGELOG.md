@@ -2,18 +2,37 @@
 
 ## Unreleased
 
-- Added offline evaluation governance for fixed-provider batch lineage, source/license audits, selective risk/coverage calibration and the omo-human-review-v1 protocol. Live-provider calls, protected-test evaluation and promotion remain disabled.
-- Expanded the local synthetic routing corpus to 52 records, added a SHA-256 dataset manifest and dataset card, and kept bootstrap labels, Hub publication and training activation blocked pending review.
-- Hardened the native inference request parser against unknown fields, duplicate keys and malformed Unicode, and added a scoped pending DiskCache VEX record without relaxing strict release gates.
-- Added an OMO-003 benchmark preflight planner that requires exact code, dataset and candidate model revisions, the five comparison roles, llama.cpp Q4/Q8 candidates and a separate Transformers fp16 CPU reference. It prints a deterministic dry-run only; model downloads, sweeps, provider calls and promotion remain disabled.
-- Added an offline held-out routing evaluator for helper selection, exact argument fidelity, result interpretation and routing contention. It fails closed on missing/unknown observations and does not use protected-test data, provider calls or confidence for authorization.
-- Added the manual-only OMO-014 training preflight workflow with exact code, dataset and base-model revisions, bounded execution inputs, concurrency cancellation, locked dependencies, resume identifiers and a dry-run-only fail-closed boundary. HF Job execution, checkpoint publication and promotion remain disabled.
-- Completed the OMO-012 routing-classification contract: runtime and training
-  now share one bounded instruction, serializer, label set and proposal schema.
-- Added typed source-label validation and a deterministic TRL-compatible
-  prompt/completion builder that excludes policy-owned actions and cannot emit
-  the protected test split. The current four-record output is contract evidence,
-  not a training-ready corpus or trained model.
+- Added offline evaluation governance for fixed-provider batch lineage,
+  source/license audits, selective risk/coverage calibration and the
+  `omo-human-review-v1` protocol. Live-provider calls, protected-test
+  evaluation and promotion remain disabled.
+- Expanded the local synthetic routing corpus to 52 records, added a SHA-256
+  dataset manifest and dataset card, and kept bootstrap labels, Hub publication
+  and training activation blocked pending review.
+- Hardened the native inference request parser against unknown fields, duplicate
+  JSON keys and malformed Unicode, and added a scoped pending DiskCache VEX
+  record without relaxing strict release gates.
+- Added OMO-003 benchmark preflight and OMO-004 held-out evaluation contracts;
+  both produce offline evidence plans only and do not call providers or promote
+  models.
+- Added the manual-only OMO-014 training preflight workflow with exact code,
+  dataset and base-model revisions, bounded inputs, cancellation, locked
+  dependencies, resume identifiers and a dry-run-only fail-closed boundary.
+- Unified the OMO-012/013 routing-classification objective as
+  `omo-routing-proposal-v1` across runtime, training, evaluation and contract
+  checks. The model may propose only `external_model`, `helper` or `clarify`;
+  deterministic policy retains `local_answer`, `reject`, authorization and
+  target eligibility.
+- Added bounded ordered multi-turn serialization, duplicate-key-safe Proposal
+  parsing and a deterministic train-only dataset builder with input/output
+  checksums. The current 14-record output is contract evidence, not a
+  training-ready corpus or trained model.
+- Added the disabled OMO-016 model-promotion manifest and trusted build-time
+  materializer. It verifies an immutable Hub revision, filename, size and
+  SHA-256 before replacement; request-time model downloads remain impossible.
+- Added restart-durable local budget reservations and fail-closed native parser
+  hardening; distributed accounting, provider reconciliation and independent
+  security review remain deployment/release work.
 
 ## 0.1.0 development follow-up — 2026-09-14
 
@@ -29,39 +48,30 @@
 - Added offline registry freshness/status administration, authenticated
   last-known-good reload and a declared tokenizer strategy for external count
   estimates. Request-time discovery and downloads remain disabled.
-- Verified the issue-first Codex/Claude workflow on reviewed PR #10; Claude
-  reported no findings and the PR passed all required CI jobs before merge.
-- Merged the OMO-008–OMO-011 offline foundations in PR #11 after a clean Claude
-  review and passing required CI, including native AMD64 and ARM64 validation.
-- Hardened the native inference protocol against duplicate JSON keys and added
-  restart-durable local budget reservations; distributed accounting and provider
-  cost reconciliation remain deployment work.
-- Hardened change-aware model/container selection: PRs compare the base SHA with the actual head SHA, all branch names are supported, renames/deletions are inspected, and unknown or unavailable change sets run both expensive suites.
-- Manual dispatch and reusable release validation force the complete model/container suites; lightweight checks, secret scanning and release-contract checks remain unconditional.
-- Added bounded upstream OpenAI-compatible SSE parsing with terminal-event validation, usage preservation, pre-data rate-limit retry only, and no replay after partial output.
-- Added typed model-proposed helper arguments with the same strict schemas as explicit helper requests; untyped or incomplete proposals fail closed.
-- Added predeclared cross-model evaluation gates, a disabled HF publication identity contract, security-report validation, and evidence-bound multi-platform promotion validation. External account, signing and security findings remain release blockers.
+- Verified the issue-first Codex/Claude workflow on reviewed PR #10 and merged
+  the OMO-008–OMO-011 offline foundations in PR #11 after required CI passed.
+- Hardened change-aware model/container selection, bounded upstream SSE parsing,
+  typed model-proposed helper arguments and evidence-bound multi-platform
+  promotion validation.
 
 ## 0.1.0 reviewer workflow hardening — 2026-09-13
 
-- Consolidated Claude into one review-only PR workflow; removed the comment-driven assistant (manual retry remains available through Actions).
-- Added draft/fork/actor guards, a specific Codex bot allowance without bypassing write-access checks, immutable action refs, credential-free checkout, timeout/turn bounds and per-PR cancellation.
-- Added three workflow regression tests. Local verification: 94 non-model tests passed (12 model tests deselected), ruff check/format, mypy and the unchanged release contract passed. Remote review and CI are recorded on PR #3, not inferred from local checks.
+- Consolidated Claude into one review-only PR workflow with draft/fork/actor
+  guards, immutable action refs, credential-free checkout, timeout/turn bounds
+  and per-PR cancellation.
+- Added workflow regression tests and kept remote review/CI evidence separate
+  from local verification claims.
 
 ## 0.1.0 development baseline — 2026-09-13
 
-- Embedded SmolLM2-360M Q8_0 through pinned llama-cpp-python, checksum validation, warmup and supervised cancellation.
-- Exact decimal helper and a bounded even-squares transformation through real Monty workers.
-- Strict API/configuration/proposal schemas, protected endpoints, immutable registry snapshots and hard-constraint external selection.
-- One pooled OpenAI-compatible/OpenRouter adapter with bounded responses, limited 429 retries and safe failures.
-- Validated upstream SSE collection with buffered downstream delivery; no provider output rewriting or native guest-code fallback.
-- Real model, sandbox, policy, provider and API tests; original split-aware seed data and offline development evaluator.
-- Bundled/slim Docker targets, hardened Compose and native architecture CI contracts.
-- Manual gated candidate-release workflow; training, schedules and model promotion remain disabled.
-- Corrected locked native build constraints, added secret/container vulnerability scans and a strict release audit gate; the DiskCache advisory remains a publication blocker.
-- Expanded container acceptance for authentication, resource bounds and real sandbox isolation; release manifests bind code/model/data/policy identities.
-- Fixed a cancellation-test observation race and now require complete worker reaping rather than accepting zombie state.
-
-- Native AMD64 and ARM64 bundled images passed offline model/helper/sandbox/authentication/limits/shutdown acceptance at implementation commit 23a0b2881ec69f42d864d15440f8f06ef3969239. The pinned PCRE2 update removed two findings; remaining strict-audit blockers are retained in TODO.md.
-
-Publication and platform evidence are recorded separately in docs/VALIDATION.md. This is not a production release or an OMO fine-tuned model.
+- Embedded SmolLM2-360M Q8_0 through pinned llama-cpp-python, checksum
+  verification, warmup and supervised cancellation.
+- Added exact decimal and bounded even-squares helpers through real Monty
+  workers, strict API/configuration/proposal schemas, authentication, immutable
+  registries, bounded external calls and validated upstream SSE collection.
+- Added real model, sandbox, policy, provider and API tests; bundled/slim Docker
+  targets; hardened Compose; native architecture CI contracts; secret scanning;
+  container reports and strict release vulnerability gates.
+- Kept training, schedules, automatic promotion and stable model publication
+  disabled. The bundled checkpoint remains upstream SmolLM2, not an OMO
+  fine-tune.

@@ -1,0 +1,15 @@
+schema_version: "1"
+objective: omo-routing-proposal-v1
+source:
+  path: evaluation/seed.jsonl
+  name: omo-original-synthetic
+  license: Apache-2.0
+training_splits: [train]
+protected_test_split: test
+output:
+  format: canonical-jsonl
+  record_order: id-ascending
+  card_filename: DATASET_CARD.json
+publication:
+  hub_revision_required: true
+  status: blocked-pending-omo-006
