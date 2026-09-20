@@ -156,6 +156,29 @@ def classify(paths: Iterable[str]) -> dict[str, bool]:
     return selected
 
 
+def requires_review(paths: Iterable[str]) -> bool:
+    """Return whether the independent reviewer should inspect the change set.
+
+    Documentation-only changes do not exercise executable behavior and can use
+    the repository's lightweight checks without consuming a reviewer run. Any
+    unknown, workflow, configuration, or source path remains reviewable.
+    """
+    changed = tuple(paths)
+    if not changed:
+        return True
+
+    for path in changed:
+        normalised = _normalise_path(path)
+        if (
+            normalised.startswith("docs/")
+            or normalised in DOCUMENTATION_FILES
+            or normalised.endswith(".md")
+        ):
+            continue
+        return True
+    return False
+
+
 def _is_missing_revision(revision: str | None) -> bool:
     return not revision or set(revision) == {"0"}
 
@@ -223,6 +246,18 @@ def select(base: str | None, head: str | None, force_full: bool = False) -> dict
         return dict(FULL_VALIDATION)
 
 
+def review_required(base: str | None, head: str | None, force_full: bool = False) -> bool:
+    """Select the independent reviewer and fail closed on an unusable diff."""
+    if force_full or _is_missing_revision(base) or _is_missing_revision(head):
+        return True
+    if base is None or head is None:
+        return True
+    try:
+        return requires_review(changed_paths(base, head))
+    except (OSError, ValueError, subprocess.CalledProcessError):
+        return True
+
+
 def _parse_bool(value: str) -> bool:
     lowered = value.strip().lower()
     # GitHub Actions may render a false boolean expression as an empty env value.
@@ -242,6 +277,7 @@ def main() -> None:
     args = parser.parse_args()
 
     selected = select(args.base, args.head, args.force_full)
+    selected["review"] = review_required(args.base, args.head, args.force_full)
     output = "".join(f"{name}={str(value).lower()}\n" for name, value in selected.items())
     if args.github_output:
         with args.github_output.open("a") as file:

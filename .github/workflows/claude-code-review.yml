@@ -8,13 +8,37 @@ concurrency:
   group: omo-claude-review-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
+  review-scope:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      required: ${{ steps.select.outputs.review }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Select review scope
+        id: select
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: >-
+          python src/omo/ci_changes.py
+          --base "$BASE_SHA"
+          --head "$HEAD_SHA"
+          --github-output "$GITHUB_OUTPUT"
   claude-review:
+    needs: review-scope
     # The action independently checks write access; no non-writer bypass.
     if: >-
       github.repository == 'bassemZohdy/open-model-orchestrator' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.state == 'open' &&
       !github.event.pull_request.draft &&
+      needs.review-scope.outputs.required == 'true' &&
       (github.actor == 'bassemZohdy' || github.actor == 'chatgpt-codex-connector[bot]')
     runs-on: ubuntu-24.04
     timeout-minutes: 15

@@ -5,7 +5,14 @@ from pathlib import Path
 import pytest
 import yaml
 
-from omo.ci_changes import _parse_bool, changed_paths, classify, select
+from omo.ci_changes import (
+    _parse_bool,
+    changed_paths,
+    classify,
+    requires_review,
+    review_required,
+    select,
+)
 
 
 @pytest.mark.parametrize("path", ["README.md", "docs/API.md", "TODO.md", "notes/design.md"])
@@ -54,6 +61,26 @@ def test_mixed_documentation_and_runtime_changes_run_both() -> None:
 
 def test_empty_change_set_fails_closed() -> None:
     assert classify([]) == {"model": True, "container": True}
+
+
+@pytest.mark.parametrize("path", ["README.md", "docs/API.md", "TODO.md", "notes/design.md"])
+def test_documentation_only_changes_skip_independent_review(path: str) -> None:
+    assert requires_review([path]) is False
+
+
+@pytest.mark.parametrize(
+    "path", ["src/omo/service.py", ".github/workflows/new.yml", "new-file.json"]
+)
+def test_non_documentation_changes_require_independent_review(path: str) -> None:
+    assert requires_review([path]) is True
+
+
+def test_mixed_documentation_and_runtime_changes_require_independent_review() -> None:
+    assert requires_review(["README.md", "src/omo/service.py"]) is True
+
+
+def test_empty_review_change_set_fails_closed() -> None:
+    assert requires_review([]) is True
 
 
 def test_changed_paths_includes_multiple_commits_and_rename_sides(
@@ -124,6 +151,9 @@ def test_invalid_revision_is_rejected_and_selection_fails_safe() -> None:
     assert select("0" * 40, "HEAD") == {"model": True, "container": True}
     assert select(None, None) == {"model": True, "container": True}
     assert select("base", "head", force_full=True) == {"model": True, "container": True}
+    assert review_required("0" * 40, "HEAD") is True
+    assert review_required(None, None) is True
+    assert review_required("base", "head", force_full=True) is True
 
 
 @pytest.mark.parametrize("value", ["", "false", "FALSE"])
