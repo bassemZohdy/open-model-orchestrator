@@ -8,6 +8,9 @@
   optimization-sensitive assertions to explicit failures.
 - Increased the bounded Claude review budget after repeated incomplete reviews
   exhausted the previous 20-turn limit without posting a result.
+- Added a fail-closed review-scope gate so documentation-only PRs skip the
+  independent Claude run while workflow, runtime and unknown changes remain
+  reviewable.
 - Strengthened stable-release promotion evidence to require digest-bound,
   per-platform SBOM, provenance and signature identity records.
 

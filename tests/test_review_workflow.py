@@ -17,6 +17,14 @@ def test_review_event_surface() -> None:
     assert not Path(".github/workflows/claude.yml").exists()
     assert workflow["concurrency"]["cancel-in-progress"] is True
     assert "pull_request.number" in workflow["concurrency"]["group"]
+    assert "review-scope" in workflow["jobs"]
+    assert workflow["jobs"]["claude-review"]["needs"] == "review-scope"
+    assert (
+        "needs.review-scope.outputs.required == 'true'" in workflow["jobs"]["claude-review"]["if"]
+    )
+    assert workflow["jobs"]["review-scope"]["outputs"] == {
+        "required": "${{ steps.select.outputs.review }}"
+    }
 
 
 def test_reviewer_trust_and_execution_bounds() -> None:
