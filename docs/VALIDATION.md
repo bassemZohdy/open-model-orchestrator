@@ -8,23 +8,25 @@ remaining work is tracked in [TODO](../TODO.md),
 The evidence below is not a claim that paid training, live-provider evaluation
 or publication has been performed.
 
-## Current main verification — PR #23, 2026-09-20
+## Current main verification — PR #24, 2026-09-20
 
-PR [#23](https://github.com/bassemZohdy/open-model-orchestrator/pull/23) merged
-the remaining repository cleanup into `main` at
-`19d1683321ba46bcc3d7fc27a2acefee78772137`. Its head commit
-`d43d296885c3710eeb72cc41b360e24b0316e543` passed the
-[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35513626343)
-and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35513626348).
+PR [#24](https://github.com/bassemZohdy/open-model-orchestrator/pull/24) merged
+the release-contract improvement into `main` at
+`935650ca3fa32d489f07fbe6678b01b58889dfcf`. Its head commit
+`e2bde2272eba5875f67d0bca8e8a1d42c5c2bba0` passed the
+[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35518822619)
+and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35518822673).
 The validation passed static checks, secret scanning, real-model validation and
 native AMD64/ARM64 container acceptance. Local verification on the merged tree
 passed 212 non-model tests, with 12 model tests deselected, plus Ruff,
 formatting, mypy, dataset/evaluation/training/access/publication/model-
 promotion/release contracts and the OMO-015 artifact-contract tests.
 
-This verifies the repository implementation only. The release remains blocked
-by the external security/VEX, signing, training, human-review, Hugging Face
-publication and Docker Hub promotion gates listed in [TODO](../TODO.md).
+This verifies the repository implementation only. Public Docker publication
+still requires the protected release workflow, security/signing approval and
+immutable digest evidence. Training, human review and Hugging Face publication
+remain separate external gates listed in [TODO](../TODO.md). OMO does not
+operate a production host.
 
 ## Historical main verification — PR #11, 2026-09-14
 
@@ -90,8 +92,8 @@ Development tests may pass while security reports contain release-blocking findi
 
 | Destination | Verified state |
 |---|---|
-| GitHub `bassemZohdy/open-model-orchestrator` | Current `main` is `19d1683` after PR #23; repository validation is green, with no model publication or stable application release |
-| Docker Hub `bzohdy/open-model-orchestrator` | Login verified in run `34754068464`; artifact `10315684770`, archive SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`. Push permission untested; no candidate/stable image published by this work |
+| GitHub `bassemZohdy/open-model-orchestrator` | Current `main` is `935650c` after PR #24; repository validation is green, with no model publication or stable application release |
+| Docker Hub `bzohdy/open-model-orchestrator` | Actions credentials configured and login verified in run `34754068464`; a successful project-image push and immutable digest still need to be recorded; no candidate/stable image published by this work |
 | HF `BassemZohdy/open-model-orchestrator` | Repository created by the owner; no approved OMO fine-tuned artifact is published |
 | HF `BassemZohdy/open-model-orchestrator-dataset` | Intended dataset target; immutable publication and publishing authority remain unverified |
 | Paid training/inference, schedules, automatic promotion | Not executed; disabled |
