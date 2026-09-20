@@ -34,9 +34,14 @@
   tokenizer, configuration and model-card files, exact checksums, training
   lineage, held-out evidence, license provenance and the upstream rollback
   target before publication.
+- Clarified the self-hosted distribution boundary: OMO publishes optional
+  Docker artifacts for users to operate in their own environments and does not
+  provide a project-managed production host. Multi-instance ledgers,
+  request-time registry discovery and operator telemetry are not release gates.
 - Added restart-durable local budget reservations and fail-closed native parser
-  hardening; distributed accounting, provider reconciliation and independent
-  security review remain deployment/release work.
+  hardening; distributed accounting and provider reconciliation remain optional
+  operator integrations, while independent security review remains a release
+  gate.
 
 ## 0.1.0 development follow-up — 2026-09-14
 
