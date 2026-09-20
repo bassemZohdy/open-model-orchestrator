@@ -44,7 +44,7 @@ exists. No HF upload workflow is enabled until publisher authorization,
 licensing and artifact identity are verified. Model and application releases
 remain separate; application changes never trigger retraining.
 
-Release manifest must bind exact code commit, platform image digests, model checksum/revision/template/quantization, dataset hash, evaluation and policy/calibration revisions. Candidate records capture partial publication. Stable promotion/signature verification is not yet implemented; keep the previous complete pinned deployment until it is. Never report a skipped workflow as published. Rollback is redeploying the preceding complete approved manifest's image digest, not rebuilding a mutable tag.
+Release manifest must bind exact code commit, platform image digests, model checksum/revision/template/quantization, dataset hash, evaluation and policy/calibration revisions. Candidate records capture partial publication. The repository promotion validator now requires a structured evidence record with per-platform SBOM/provenance/signature digests and signing identity/issuer bound to each image digest, but the protected workflow still does not perform signing or stable alias mutation. Keep the previous complete pinned deployment until those owner-controlled gates are complete. Never report a skipped workflow as published. Rollback is redeploying the preceding complete approved manifest's image digest, not rebuilding a mutable tag.
 
 An approved model bundle must also pass the offline OMO-015 artifact contract
 before publication:

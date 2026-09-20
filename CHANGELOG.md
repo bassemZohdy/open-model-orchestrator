@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Hardened provider response limits and replaced runtime security assertions
+  with explicit fail-closed errors.
+- Converted release, training, access-policy and container smoke gates from
+  optimization-sensitive assertions to explicit failures.
+- Strengthened stable-release promotion evidence to require digest-bound,
+  per-platform SBOM, provenance and signature identity records.
+
 - Added offline evaluation governance for fixed-provider batch lineage,
   source/license audits, selective risk/coverage calibration and the
   `omo-human-review-v1` protocol. Live-provider calls, protected-test

@@ -55,9 +55,11 @@ original dataset identities while keeping HF publishing disabled until the
 owner grants narrowly scoped authority.
 
 scripts/promote_release.py validates two matching native candidate manifests
-and requires passed security, SBOM, provenance and signature evidence before
-writing a stable manifest. It does not mutate registry tags; that final
-operation remains protected release-environment work.
+and requires structured, digest-bound security, SBOM, provenance and signature
+evidence before writing a stable manifest. It rejects detached verification
+booleans and binds provenance/signature subjects to each candidate image
+digest. It does not mutate registry tags; that final operation remains
+protected release-environment work.
 
 ## Evidence status
 

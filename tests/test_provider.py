@@ -87,6 +87,15 @@ async def test_invalid_or_large_response(entry, request_factory, monkeypatch, bo
         )
 
 
+async def test_response_limit_is_checked_before_append(entry, request_factory, monkeypatch):
+    body = b"x" * (OpenAIProvider.MAX_RESPONSE_BYTES + 1)
+
+    with pytest.raises(ProviderError, match="provider_response_too_large"):
+        await call(
+            entry, request_factory(), lambda r: httpx.Response(200, content=body), monkeypatch
+        )
+
+
 async def test_timeout_not_replayed(entry, request_factory, monkeypatch):
     seen = []
 

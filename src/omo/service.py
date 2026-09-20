@@ -135,7 +135,8 @@ class Orchestrator:
             executor = "embedded_model"
         elif decision.action == "helper":
             call = decision.helper
-            assert call is not None
+            if call is None:
+                raise OmoError("invalid_helper_decision", 500)
             if isinstance(call, Arithmetic):
                 result = arithmetic(call)
                 executor = "trusted_helper"

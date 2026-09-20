@@ -100,7 +100,10 @@ def decide(
     if request.omo.required_capability == "current_information":
         return Decision(action="reject", reason="retrieval_unavailable", registry_version=version)
     if request.omo.action == "helper":
-        assert request.omo.helper is not None
+        if request.omo.helper is None:
+            return Decision(
+                action="reject", reason="invalid_helper_request", registry_version=version
+            )
         if request.omo.helper.id == "even_squares" and not settings.sandbox_enabled:
             return Decision(action="reject", reason="sandbox_disabled", registry_version=version)
         return Decision(

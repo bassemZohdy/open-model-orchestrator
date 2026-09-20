@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from omo.config import Settings, load_settings
-from omo.contracts import Arithmetic, ChatRequest, Proposal
+from omo.contracts import Arithmetic, ChatRequest, Options, Proposal
 from omo.helpers import arithmetic, fast_helper
 from omo.policy import decide, eligible_models
 from omo.registry import Registry, RegistryStore
@@ -126,6 +126,17 @@ def test_model_helper_proposal_is_typed_and_authorized(entry, request_factory):
 def test_model_helper_proposal_requires_arguments():
     with pytest.raises(ValidationError, match="helper arguments"):
         Proposal(action="helper")
+
+
+def test_invalid_helper_request_fails_closed_without_assertions(entry, request_factory):
+    request = ChatRequest.model_construct(omo=Options.model_construct(action="helper", helper=None))
+    decision = decide(
+        request,
+        Registry(version="test", models=(entry,)),
+        Settings(external_enabled=True, sandbox_enabled=True),
+    )
+    assert decision.action == "reject"
+    assert decision.reason == "invalid_helper_request"
 
 
 @pytest.mark.parametrize(

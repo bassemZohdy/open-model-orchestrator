@@ -10,7 +10,12 @@ import urllib.error
 import urllib.request
 
 
-def main():
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
+def main() -> None:
     environment = {
         k: v
         for k, v in os.environ.items()
@@ -55,16 +60,16 @@ def main():
             try:
                 request(path, headers={"Authorization": "Bearer invalid"})
             except urllib.error.HTTPError as error:
-                assert error.code == 401
+                require(error.code == 401, f"protected endpoint returned {error.code}")
             else:
                 raise AssertionError("protected endpoint accepted an invalid key")
-        assert request("/v1/models")["data"][0]["id"] == "omo"
+        require(request("/v1/models")["data"][0]["id"] == "omo", "model id drifted")
         try:
             request(
                 "/v1/chat/completions", {"messages": [{"role": "user", "content": "x" * 40000}]}
             )
         except urllib.error.HTTPError as error:
-            assert error.code == 413
+            require(error.code == 413, f"oversized request returned {error.code}")
         else:
             raise AssertionError("request byte budget not enforced")
         examples = [
@@ -83,7 +88,10 @@ def main():
         ]
         for body, executor in examples:
             r = request("/v1/chat/completions", body)
-            assert r["omo"]["executor"] == executor and r["omo"]["status"] == "success", r
+            require(
+                r["omo"]["executor"] == executor and r["omo"]["status"] == "success",
+                repr(r),
+            )
             print(
                 json.dumps(
                     {
@@ -103,9 +111,9 @@ def main():
             process.wait()
             raise AssertionError("graceful shutdown timed out") from None
     diagnostics = process.stderr.read().decode()
-    assert "Application shutdown complete" in diagnostics, "lifespan shutdown did not complete"
+    require("Application shutdown complete" in diagnostics, "lifespan shutdown did not complete")
     # Uvicorn re-raises the captured SIGTERM after clean lifespan shutdown.
-    assert process.returncode in (0, -15), process.returncode
+    require(process.returncode in (0, -15), repr(process.returncode))
 
     async def isolation_checks():
         from omo.sandbox import MontySandbox
@@ -117,11 +125,26 @@ def main():
                 "import os; os.getenv('OMO_API_KEY')",
                 "import subprocess",
             ]:
-                assert (await sandbox.execute(code, {})).status != "success"
-            assert (await sandbox.execute("while True:\n pass", {})).status == "timeout"
-            assert (await sandbox.execute("[0] * 100000000", {})).status == "resource-limit"
-            assert (await sandbox.execute("value = 7\nvalue", {})).value == 7
-            assert (await sandbox.execute("value", {})).status == "policy-denied"
+                require(
+                    (await sandbox.execute(code, {})).status != "success",
+                    f"sandbox allowed forbidden code: {code}",
+                )
+            require(
+                (await sandbox.execute("while True:\n pass", {})).status == "timeout",
+                "sandbox timeout limit failed",
+            )
+            require(
+                (await sandbox.execute("[0] * 100000000", {})).status == "resource-limit",
+                "sandbox memory limit failed",
+            )
+            require(
+                (await sandbox.execute("value = 7\nvalue", {})).value == 7,
+                "sandbox execution failed",
+            )
+            require(
+                (await sandbox.execute("value", {})).status == "policy-denied",
+                "sandbox private value was not denied",
+            )
 
     asyncio.run(isolation_checks())
     print("Runtime smoke, authentication, limits, isolation and graceful shutdown passed")
