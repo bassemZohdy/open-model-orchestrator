@@ -19,3 +19,12 @@ Training preparation is separately lineage-bound in
 [`config/training.yaml`](../config/training.yaml). It remains dry-run-only and
 cannot create a publishable model artifact until the training, export,
 quantization, evaluation and signing gates are independently approved.
+
+The disabled-by-default [`config/model-promotion.yaml`](../config/model-promotion.yaml)
+defines the next boundary: an approved fine-tuned revision must be pinned by
+Hub repository, immutable revision, filename, format, template, size and
+SHA-256. [`scripts/materialize_model.py`](../scripts/materialize_model.py) can
+materialize that exact artifact only in a trusted build step and verifies it
+before replacement. Runtime request-time downloads are permanently disabled;
+the upstream `models/manifest.json` remains the rollback target until a full
+evaluation and release approval replace it.

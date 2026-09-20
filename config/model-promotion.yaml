@@ -1,0 +1,17 @@
+schema_version: "1"
+enabled: false
+candidate:
+  repository: BassemZohdy/open-model-orchestrator
+  revision: null
+  filename: null
+  format: safetensors
+  quantization: null
+  template: chatml-explicit-v1
+  size_bytes: null
+  sha256: null
+runtime:
+  request_time_download: false
+  build_time_materialization: trusted-only
+rollback:
+  manifest: models/manifest.json
+  required: true

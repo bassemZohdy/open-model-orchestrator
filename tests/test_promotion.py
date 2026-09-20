@@ -14,6 +14,7 @@ def candidate(platform):
         "dataset_sha256": "c" * 64,
         "evaluation_program_sha256": "d" * 64,
         "policy_sha256": "e" * 64,
+        "model_manifest_sha256": "a" * 64,
         "platform": platform,
         "image": "example/omo",
         "image_digest": "sha256:" + "f" * 64,

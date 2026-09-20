@@ -2,7 +2,7 @@
 
 Verified GitHub account: `bassemZohdy`. Target repository: `bassemZohdy/open-model-orchestrator`, ID 1368293245, public, main branch. Initial checks returned 404; the owner then created the repository. OMO initialized main with a small README and developed on feat/bootstrap-v0.1. No other repository was changed or renamed.
 
-Hugging Face account: `BassemZohdy`. The connector reported read-repos/read-mcp/profile/openid/jobs scopes, with no publishing scope; identity was reverified on 2026-09-13 and the connector reported credential expiry 2026-09-13T18:03:41Z. Revalidate credentials before later operations. Intended model target `BassemZohdy/open-model-orchestrator` and dataset target `BassemZohdy/open-model-orchestrator-dataset` were not found through the available read connection. Neither is created or published. The deployed base checkpoint is the upstream revision in models/manifest.json; it must not be published as a new OMO fine-tune.
+Hugging Face account: `BassemZohdy`. The connector reported read-repos/read-mcp/profile/openid/jobs scopes, with no publishing scope; identity was reverified on 2026-09-13 and the connector reported credential expiry 2026-09-13T18:03:41Z. Revalidate credentials before later operations. The owner created the model target `BassemZohdy/open-model-orchestrator`; it currently has no approved OMO fine-tuned artifact. The dataset target `BassemZohdy/open-model-orchestrator-dataset` and immutable publication authority remain unverified. The deployed base checkpoint is the upstream revision in models/manifest.json; it must not be published as a new OMO fine-tune.
 
 Verified Docker Hub namespace: `bzohdy`; image target `bzohdy/open-model-orchestrator`. Actions login succeeded in run 34754068464/job 103715356976. Authentication is verified; push permission and image publication are not. Account artifact ID 10315684770, SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`.
 
@@ -33,7 +33,6 @@ For HF, use documented trusted publisher configuration for narrowly scoped model
 ```bash
 hf auth login
 hf auth whoami
-hf repos create BassemZohdy/open-model-orchestrator --type model
 hf repos create BassemZohdy/open-model-orchestrator-dataset --type dataset
 ```
 

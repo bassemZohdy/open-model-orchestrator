@@ -78,10 +78,13 @@ jobs:
       - run: uv run --no-sync python evaluation/heldout.py --validate-cases
       - run: uv run --no-sync python training/dataset.py --split train
       - run: uv run --no-sync python evaluation/dataset.py --validate-outcomes evaluation/outcomes.example.jsonl
+      - run: uv run --no-sync python scripts/check_classification_contract.py
+      - run: uv run --no-sync python scripts/check_dataset_pipeline.py
       - run: uv run --no-sync python scripts/check_evaluation_contract.py
       - run: uv run --no-sync python scripts/check_training_contract.py
       - run: uv run --no-sync python scripts/check_access_contract.py
       - run: uv run --no-sync python scripts/check_publication_contract.py
+      - run: uv run --no-sync python scripts/check_model_promotion.py
       - run: uv run --no-sync python scripts/check_release_contract.py
   real-model:
     needs: changes

@@ -1,13 +1,14 @@
 # Validation and delivery evidence
 
-This document retains the historical baseline evidence from 2026-09-13 and the
-current verification of `main`. The OMO-008–OMO-011 offline foundations and CI
-cleanup are merged; current remaining work is tracked in [TODO](../TODO.md),
+This document retains historical CI evidence from 2026-09-13/14 and the
+repository verification scope. The OMO-008–OMO-011 offline foundations,
+OMO-012/013 contract pipeline and OMO-014 preflight are merged; current
+remaining work is tracked in [TODO](../TODO.md),
 [training](TRAINING.md), [dataset](DATASET.md) and [operations](OPERATIONS.md).
 The evidence below is not a claim that paid training, live-provider evaluation
 or publication has been performed.
 
-## Current main verification — PR #11, 2026-09-14
+## Historical main verification — PR #11, 2026-09-14
 
 PR [#11](https://github.com/bassemZohdy/open-model-orchestrator/pull/11) was
 reviewed by Claude with no findings and merged into `main` at
@@ -15,13 +16,14 @@ reviewed by Claude with no findings and merged into `main` at
 [OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34803105374)
 passed static checks, secret scanning, real-model validation and native AMD64
 and ARM64 container acceptance. The current local non-model suite passed **163
-tests**, with **12 model tests deselected**. Dataset validation passed for 30
+tests**, with **12 model tests deselected**. That historical run validated 30
 original synthetic records and the outcome example passed with SHA-256
 `ba53c337cee6a7611e17e82c1661e90b99c0181efdfe9dd785c6a863e8a66714`.
 
 The training, access-policy, evaluation, publication and release contracts also
-passed. Training, live-provider baselines, paid operations, publication and
-stable promotion remain disabled.
+passed at that revision. The current 52-record dataset and merged OMO-012/013
+pipeline require fresh CI evidence; training, live-provider baselines, paid
+operations, publication and stable promotion remain disabled.
 
 ## Implemented and tested
 
@@ -31,11 +33,11 @@ stable promotion remain disabled.
 - Bundled/slim Docker targets, hardened Compose, native AMD64/ARM64 validation, secret scanning, container reports and strict release vulnerability gates. Training is a dry-run preparation tool only.
 - Typed model-proposed helper arguments, predeclared cross-model evaluation gates, disabled HF publication identity checks and evidence-bound multi-platform promotion validation are covered by local contract tests.
 
-The current local verification passed **163 non-model tests**, with **12 model
-tests deselected**, plus Ruff lint/format, strict mypy, 30-record dataset and
-outcome validation, training/access/evaluation contracts, and release-event and
-schedule contracts. Historical baseline measurements and earlier run details
-remain below for traceability.
+The historical local verification passed **163 non-model tests**, with **12
+model tests deselected**, plus Ruff lint/format, strict mypy, 30-record dataset
+and outcome validation, training/access/evaluation contracts, and release-event
+and schedule contracts. Fresh verification for the current cleanup branch is
+reported by CI/command output rather than inferred from this historical record.
 
 The trusted real-model run for the implementation commit is [34755031771](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/34755031771): **12 passed**, plus **46/46 development evaluation checks**, with zero external calls. Its artifact ID is `10315969857`; archive SHA-256 `27d597194fa85524958b16317a104e93dc7b769319d260f61d9a1b6549c3b87f`.
 
@@ -72,11 +74,11 @@ Development tests may pass while security reports contain release-blocking findi
 |---|---|
 | GitHub `bassemZohdy/open-model-orchestrator` | OMO-008–OMO-011 offline foundations and CI cleanup are merged into `main` through PR #11; no model publication or stable release |
 | Docker Hub `bzohdy/open-model-orchestrator` | Login verified in run `34754068464`; artifact `10315684770`, archive SHA-256 `6bfc2ccfbb3413cf9313b9d4dc92a7fa42a7ce948bb08a75af5fbc1edb737b16`. Push permission untested; no candidate/stable image published by this work |
-| HF `BassemZohdy/open-model-orchestrator` | Intended target; not created/published. Connected account has no publishing scope |
-| HF `BassemZohdy/open-model-orchestrator-dataset` | Intended target; not created/published. Original data is committed in GitHub |
+| HF `BassemZohdy/open-model-orchestrator` | Repository created by the owner; no approved OMO fine-tuned artifact is published |
+| HF `BassemZohdy/open-model-orchestrator-dataset` | Intended dataset target; immutable publication and publishing authority remain unverified |
 | Paid training/inference, schedules, automatic promotion | Not executed; disabled |
 
-The bundled artifact remains upstream `HuggingFaceTB/SmolLM2-360M-Instruct-GGUF`, revision `593b5a2e04c8f3e4ee880263f93e0bd2901ad47f`, SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`. It is not an OMO fine-tune. Current dataset SHA-256: `44a42fa08350b9e2bccaafa99c9baf668028ce54a99c5d56ff62ce200e1f05d3`. Current outcome-example SHA-256: `ba53c337cee6a7611e17e82c1661e90b99c0181efdfe9dd785c6a863e8a66714`.
+The bundled artifact remains upstream `HuggingFaceTB/SmolLM2-360M-Instruct-GGUF`, revision `593b5a2e04c8f3e4ee880263f93e0bd2901ad47f`, SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`. It is not an OMO fine-tune. Current dataset SHA-256: `896d92c892c6cc951e73bbb184b1a59f0fa50f4831cc3c831360b5107d39e5f7`. Current outcome-example SHA-256: `ba53c337cee6a7611e17e82c1661e90b99c0181efdfe9dd785c6a863e8a66714`.
 
 Earlier failed runs remain visible: the first build used an unsupported uv flag
 (fixed), one duplicate push run hit the cancellation-test observation race

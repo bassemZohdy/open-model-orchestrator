@@ -80,8 +80,11 @@ uv run --no-sync pytest -m model -q
 uv run --no-sync python evaluation/run.py --output evaluation/results-local/evaluation.json
 uv run --no-sync python evaluation/dataset.py --validate-outcomes evaluation/outcomes.example.jsonl
 uv run --no-sync python training/dataset.py --split train
+uv run --no-sync python scripts/check_classification_contract.py
+uv run --no-sync python scripts/check_dataset_pipeline.py
 uv run --no-sync python scripts/check_evaluation_contract.py
 uv run --no-sync python scripts/check_publication_contract.py
+uv run --no-sync python scripts/check_model_promotion.py
 uv run --no-sync python scripts/check_training_contract.py
 uv run --no-sync python scripts/check_access_contract.py
 uv run --no-sync python training/sft.py --dry-run

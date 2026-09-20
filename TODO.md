@@ -1,63 +1,57 @@
 # Remaining OMO work
 
-Only unfinished work is listed here. Completed implementation history belongs in
-`CHANGELOG.md`. Paid training/inference, external publication, scheduling and
-automatic promotion remain disabled.
+Only unfinished work is listed here. Completed repository work belongs in
+[`CHANGELOG.md`](CHANGELOG.md). Paid training/inference, external publication,
+scheduling and automatic promotion remain disabled.
 
-Task states distinguish implementation readiness from external activation.
-`ready` means repository work can proceed now; it does not authorize paid
-compute, account changes, publication, promotion or production deployment.
+Task state separates repository implementation from owner-controlled activation.
+No `ready` item authorizes paid compute, account changes, publication,
+promotion or production deployment.
 
 ## Planned model and image lifecycle
 
 GitHub remains the source of truth for code, schemas, tests and manually
-dispatched automation. Hugging Face Hub will hold the immutable training
-dataset and the OMO fine-tuned model; Docker Hub will hold the deployable
-multi-platform runtime image. The first OMO-trained artifact will fine-tune the
-selected tiny generative base for structured routing/classification proposals.
-It will not replace deterministic policy authorization, and an additional
-encoder-only classifier will not be added unless a measured comparison proves
-that its extra runtime and release lifecycle are justified.
+dispatched automation. Hugging Face Hub will hold immutable dataset/model
+revisions, and Docker Hub will hold the deployable multi-platform runtime image.
+Dataset, model and application-image releases remain separate: an application
+or dataset change must never schedule training or automatically advance a model
+or Docker tag.
 
 The intended promotion chain is:
 
 1. approve an immutable dataset revision and exact base-model revision;
 2. manually dispatch a budget-bounded training run;
-3. persist the candidate model, lineage and evaluation evidence on Hugging Face;
+3. persist the candidate model, lineage and evaluation evidence;
 4. independently approve one exact model revision and checksum;
 5. build and test the bundled application image with that pinned model; and
-6. publish and promote verified image digests in Docker Hub.
+6. publish and promote verified image digests.
 
-Dataset, model and application-image releases remain separate. A dataset or
-application change must never schedule training or automatically advance a
-model or Docker tag.
-
-| ID | Priority / state | Task and acceptance criteria | Dependencies / blocker |
+| ID | Priority / state | Remaining acceptance criteria | Blocker |
 |---|---|---|---|
-| OMO-002 | P0 / partial (parser hardening complete; review/VEX blocked) | The native inference protocol now rejects unknown fields and duplicate JSON keys, handles malformed Unicode safely, and has regression coverage. A scoped pending VEX record captures the DiskCache advisory facts without weakening strict release gates. | Independent sandbox/native-parser review, owner VEX approval, clean-audit status and VM-grade isolation remain external release gates. |
-| OMO-003 | P1 / partial (benchmark preflight complete; execution blocked) | The repository now validates a five-role benchmark manifest with exact code/dataset/model revisions, llama.cpp Q4/Q8 candidates, a Transformers fp16 CPU reference and a deterministic dry-run plan. It refuses incomplete or floating-pin manifests. | Full sweeps, exact external model pins, license decisions, hardware/budget approval and any paid/provider evaluation remain external gates. |
-| OMO-004 | P1 / partial (offline evaluator complete; evidence blocked) | The repository now validates four held-out routing scenarios covering helper selection, exact argument fidelity, result interpretation and policy-owned routing contention, with category-level scoring and fail-closed missing/unknown observation checks. | A reviewed immutable revision, enlarged corpus, calibration, human-reviewed evidence and any live-provider comparison remain external or future evidence gates. |
-| OMO-006 | P1 / blocked account | Obtain HF publishing authority/trusted-publisher claims, create `BassemZohdy/open-model-orchestrator` and `BassemZohdy/open-model-orchestrator-dataset` after exact identity/license checks, and upload original data with immutable revisions. Do not relabel base weights as an OMO fine-tune. | Both Hub resources are currently absent. The current connector is read-only for repositories, so no creation or upload was attempted. |
-| OMO-007 | P0 / remediation ready; publication blocked | Make `bzohdy/open-model-orchestrator` an operational Docker Hub release target, not a documentation-only reference: prepare a scoped DiskCache VEX/remediation decision; verify candidate SBOM/provenance and strict vulnerability gates; add signatures and stable multi-platform promotion with rerunnable rollback manifests. Stable aliases advance only after both candidate digests pass. | The current strict audit confirms CVE-2025-69872 has no fixed release and is pulled only by `llama-cpp-python`; technical remediation/signing work can proceed. Docker Hub push permission, protected environment, owner VEX approval and approved release inputs remain external gates. |
-| OMO-008 | P1 / trainer implementation ready; execution blocked | Implement the isolated Transformers/TRL SFT/export/quantization runner for `omo-routing-proposal-v1`; compare full and adapter outputs, evaluate protected held-out gates, and publish lineage plus rollback manifests only after evidence passes. | OMO-012, dry-run preparation and lineage contracts are complete. A larger OMO-013 corpus is required before a meaningful run; artifact signing and any paid operation still require owner approval. |
-| OMO-009 | P1 / partial (offline governance complete; live evidence blocked) | The repository now validates fixed-provider batch lineage, source/license audit records, selective risk/coverage calibration and the `omo-human-review-v1` protocol with pass/fail/needs-review consistency checks. | Enlarged-corpus review, live-provider baselines, paid calls and actual human review still require approval. |
-| OMO-010 | P2 / blocked deployment | Move caller budget accounting to a managed durable multi-instance store, add measured cost reconciliation and enforce DNS/IP egress through deployment network policy before multi-tenant production use. | Optional SQLite persistence now survives local process restarts; shared-store correctness, provider cost reconciliation and deployment-level DNS/IP enforcement remain. |
-| OMO-011 | P2 / blocked deployment integration | Add an owner-controlled registry source and authenticated deployment refresh integration; add provider-specific tokenizer adapters only when independently verified. | Local registry status, freshness threshold, last-known-good reload and the declared tokenizer strategy are complete. Request-time discovery and downloads remain disabled. |
-| OMO-013 | P0 / partial (local corpus expanded; review/Hub blocked) | The local corpus now has 52 original synthetic records across development, validation, calibration, train and protected-test splits. A dataset card, content-hash manifest and CI validation preserve split isolation and prevent protected-test emission. Labels remain bootstrap-only pending human review. | Human review, license/quality approval, larger evidence runs and Hub upload still depend on OMO-006 and owner-controlled gates. |
-| OMO-014 | P1 / partial (preflight complete; activation blocked) | The manual-only protected GitHub Actions preflight now requires exact code, dataset and base-model revisions; explicit method/hardware/timeout/max-cost/backend/resume inputs; concurrency cancellation; locked dependencies; and dry-run mode. It stops before HF Job execution, checkpoint publication or promotion. | Repository-owned preflight is complete. Activation still depends on OMO-006, OMO-008 and OMO-013 plus owner-approved spend, HF Jobs eligibility, a protected `training` environment, Trackio/checkpoint authority and narrowly scoped credentials. |
-| OMO-015 | P1 / pending publication pipeline | Persist every successful training candidate to `BassemZohdy/open-model-orchestrator` with safetensors, tokenizer/template, training configuration, base and dataset revisions, metrics, model card, license provenance and rollback metadata. Use repo-scoped HF Trusted Publisher/OIDC for GitHub-side publication where supported; use a separately scoped short-lived/job secret only where the remote job must push. Publish immutable candidate revisions first and promote no mutable alias until protected evaluation, security and human-review gates pass. | Depends on OMO-003, OMO-004, OMO-006, OMO-008, OMO-009 and OMO-014. Runtime credentials must never receive training or publishing authority. |
-| OMO-016 | P0 / pending runtime integration | Add an explicit model-promotion manifest that pins the approved OMO-trained Hub repository, immutable revision, filename, format/quantization, template, size and SHA-256. Download only during a trusted build/preparation step, verify before loading, bundle one approved artifact in the runtime image, and keep request-time Hub access disabled. Re-run the entire local/routing evaluation because a fine-tuned revision inherits no eligibility from the upstream checkpoint. | Depends on OMO-015 and passed protected evaluation. Preserve the preceding upstream manifest as the rollback target. |
-| OMO-017 | P0 / pending delivery integration | Extend the Docker release workflow so an approved application commit and OMO model-promotion manifest produce native AMD64/ARM64 candidates for `bzohdy/open-model-orchestrator`; test each published digest offline, assemble one multi-platform manifest, attach SBOM/provenance/signatures and promote immutable version tags before `latest`. Record the exact GitHub commit, HF model revision/checksum and Docker digests in one release manifest. | Depends on OMO-007 and OMO-016. Build/push must occur in protected GitHub Actions; Docker Hub automated builds and model downloads at container startup remain prohibited. |
-| OMO-018 | P2 / pending operations | Add model/image lifecycle operations: evidence retention, training-job ID and cost capture, candidate comparison, manual approval/audit trail, rollback drill, tag-retention policy and drift/retraining criteria. Retraining remains an explicit owner action against a new immutable dataset revision; application releases and Hub webhooks must not trigger it automatically. | Depends on the first completed OMO-014 through OMO-017 cycle and measured production-like evidence. |
+| OMO-002 | P0 / partial; release blocked | Complete independent sandbox/native-parser review and resolve the remaining container findings, or record an owner-approved VEX. | Independent review, VEX approval, clean audit and VM-grade isolation are external gates. |
+| OMO-003 | P1 / partial; evidence blocked | Run the pinned five-role model comparison, including the Transformers CPU reference, only after license, hardware and budget approval. | Full sweeps and any provider evaluation require owner approval. |
+| OMO-004 | P1 / partial; evidence blocked | Run the held-out evaluator on a reviewed immutable corpus and produce calibration and human-reviewed evidence. | The current evaluator is offline harness coverage, not quality evidence. |
+| OMO-006 | P1 / partial; publication blocked | Configure publishing authority/trusted-publisher claims, create or verify the immutable dataset repository, and publish the reviewed original data. The model repository exists but contains no approved OMO fine-tune; never relabel upstream weights. | Dataset repository, publishing scope, license review and immutable upload authority remain owner-controlled. |
+| OMO-007 | P0 / blocked stable publication | Resolve the DiskCache/security findings or approve the VEX, verify SBOM/provenance/signatures, and perform evidence-bound multi-platform promotion with rollback manifests. | Docker Hub push permission, protected release environment, signing authority and clean/approved security evidence. |
+| OMO-008 | P1 / preparation complete; execution blocked | Implement and validate the isolated Transformers/TRL SFT, full-versus-adapter comparison, export and quantization runner for `omo-routing-proposal-v1`. | Reviewed corpus, locked training stack, protected environment and owner-approved budget. |
+| OMO-009 | P1 / partial; evidence blocked | Complete fixed-provider baselines, selective calibration, source/license audit and human review on the enlarged corpus. | Live calls, human review and promotion require approval. |
+| OMO-010 | P2 / blocked deployment | Replace local SQLite/in-memory budget reservations with a managed multi-instance ledger, reconcile provider cost and enforce deployment DNS/IP egress policy. | Requires a selected production platform and deployment controls. |
+| OMO-011 | P2 / blocked integration | Add an owner-controlled authenticated registry source and refresh integration; add provider tokenizers only with verified bounds and tests. | Request-time discovery/downloads remain intentionally disabled until deployment integration is approved. |
+| OMO-013 | P0 / partial; review/Hub blocked | Complete human review and quality/license approval for the 52-record corpus, then publish an immutable dataset revision. | Bootstrap labels, dataset publication authority and review process. |
+| OMO-014 | P1 / partial; activation blocked | Keep the manual-only preflight and activate a real isolated job only after all lineage, budget, credential and review gates pass. | HF Jobs eligibility, protected `training` environment, scoped credentials and approved spend. |
+| OMO-015 | P1 / pending publication pipeline | Persist every successful candidate with safetensors, tokenizer/template, configuration, lineage, metrics, model card, license provenance and rollback metadata; publish immutable revisions before any alias. | Depends on OMO-003, OMO-004, OMO-006, OMO-008, OMO-009 and OMO-014. |
+| OMO-016 | P0 / partial; artifact blocked | The disabled model-promotion manifest and trusted build-time materialization/verification path are implemented. Activate them only for an approved fine-tuned revision, then bundle it and retain the upstream rollback target. | Depends on an approved OMO model revision and passed protected evaluation. |
+| OMO-017 | P0 / pending delivery integration | Extend the protected release to produce native AMD64/ARM64 candidates, attach SBOM/provenance/signatures, assemble the manifest and record code/model/dataset/image identities. | Depends on OMO-007 and OMO-016; Docker publication must remain protected. |
+| OMO-018 | P2 / pending operations | Add evidence retention, job/cost capture, candidate comparison, approval audit trail, rollback drill, tag retention and explicit drift/retraining criteria. | Requires one completed OMO-014 through OMO-017 cycle and production-like evidence. |
 
 ## External unblocking checklist
 
-These gates cannot be satisfied by repository code and must remain explicit:
+These gates cannot be satisfied by repository code alone:
 
 | Gate | Owner-controlled action | Tasks unblocked |
 |---|---|---|
-| HF resources | Create the model and dataset repositories named in OMO-006, verify licenses/visibility, then configure repository-scoped Trusted Publisher claims for the exact GitHub repository, branch and publishing workflow. | OMO-006, OMO-013, OMO-015 |
-| Training budget | Enable eligible Hugging Face Jobs billing/credits and approve a maximum hardware flavor, duration and dollar cost for one candidate run. | OMO-008 execution, OMO-014 activation |
-| GitHub environments | Configure protected `training` and `release` environments with required reviewers and main-branch restrictions. | OMO-007, OMO-014, OMO-017 |
-| Docker Hub publication | Confirm the automation credential can push to `bzohdy/open-model-orchestrator`; login success alone is insufficient. | OMO-007, OMO-017 |
-| Security/signing | Approve or reject the scoped DiskCache VEX after review, select the signing authority and obtain an independent sandbox/native-parser review. | OMO-002, OMO-007 |
+| HF resources | Verify the existing model repository, create/verify the dataset repository, confirm licenses/visibility and configure repository-scoped Trusted Publisher claims. | OMO-006, OMO-013, OMO-015 |
+| Training budget | Approve one hardware flavor, timeout and maximum cost; enable eligible HF Jobs credits. | OMO-008 execution, OMO-014 activation |
+| GitHub environments | Protect `training` and `release`, require reviewers and restrict allowed branches. | OMO-007, OMO-014, OMO-017 |
+| Docker Hub publication | Confirm the automation credential can push to `bzohdy/open-model-orchestrator`; login alone is insufficient. | OMO-007, OMO-017 |
+| Security/signing | Approve/reject the scoped DiskCache VEX, select signing authority and obtain independent native-parser/sandbox review. | OMO-002, OMO-007 |

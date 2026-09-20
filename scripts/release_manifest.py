@@ -16,13 +16,15 @@ def build(commit, image, digest, architecture, version, root=Path(".")):
         raise ValueError("unsupported native architecture")
     if not re.fullmatch(r"\d+\.\d+\.\d+(?:-rc\.\d+)?", version):
         raise ValueError("invalid approved release version")
+    if not image or any(character.isspace() for character in image):
+        raise ValueError("image reference must be non-empty and contain no whitespace")
 
     def sha(path):
         return hashlib.sha256((root / path).read_bytes()).hexdigest()
 
     return {
         "schema_version": "1",
-        "application_version": "0.1.0.dev0",
+        "application_version": version,
         "requested_release_version": version,
         "code_commit": commit,
         "image": image,
@@ -34,6 +36,7 @@ def build(commit, image, digest, architecture, version, root=Path(".")):
         "inference_runtime": "llama-cpp-python==0.3.35",
         "sandbox_runtime": "pydantic-monty==0.0.23",
         "dependency_lock_sha256": sha("uv.lock"),
+        "model_manifest_sha256": sha("models/manifest.json"),
         "dataset_sha256": sha("evaluation/seed.jsonl"),
         "evaluation_program_sha256": sha("evaluation/run.py"),
         "policy_version": "omo-policy-1",
