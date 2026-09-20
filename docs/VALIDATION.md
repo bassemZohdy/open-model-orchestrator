@@ -14,8 +14,8 @@ PR [#26](https://github.com/bassemZohdy/open-model-orchestrator/pull/26) merged
 runtime/release hardening and the Claude review workflow fix into `main` at
 `b009102d5c30b938be1cdfd844ecbc5d636467a8`. Its head commit
 `d04f62ad9d4dee8bb31b5a78218f2413d3ba682c` passed the
-[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35520659682)
-and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35520659684).
+[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35530100803)
+and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35530100841).
 The validation passed static checks, secret scanning, real-model validation and
 native AMD64/ARM64 container acceptance. Local verification on the merged tree
 passed 214 non-model tests, with 12 model tests deselected, plus three review-
