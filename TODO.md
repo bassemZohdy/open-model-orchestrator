@@ -7,6 +7,9 @@ scheduling and automatic promotion remain disabled.
 Task state separates repository implementation from owner-controlled activation.
 No `ready` item authorizes paid compute, account changes, publication,
 promotion or production deployment.
+At present, no repository-only task is ready for execution; every remaining row
+requires an owner-controlled approval, external evidence or protected release
+action.
 
 OMO is a self-hosted open-source distribution. The project publishes code and
 optional container artifacts; it does not provide or operate a production host.
@@ -39,7 +42,7 @@ The intended promotion chain is:
 | OMO-004 | P1 / partial; evidence blocked | Run the held-out evaluator on a reviewed immutable corpus and produce calibration and human-reviewed evidence. | The current evaluator is offline harness coverage, not quality evidence. |
 | OMO-006 | P1 / partial; publication blocked | Configure publishing authority/trusted-publisher claims, create or verify the immutable dataset repository, and publish the reviewed original data. The model repository exists but contains no approved OMO fine-tune; never relabel upstream weights. | Dataset repository, publishing scope, license review and immutable upload authority remain owner-controlled. |
 | OMO-007 | P0 / release blocked | Resolve the DiskCache/security findings or approve the VEX, then provide the structured digest-bound SBOM/provenance/signature evidence required for multi-platform promotion with rollback manifests. | Protected release environment, signing authority and clean/approved security evidence. Docker Hub Actions credentials are configured; a successful project image push still needs to be verified. |
-| OMO-008 | P1 / preparation complete; execution blocked | Implement and validate the isolated Transformers/TRL SFT, full-versus-adapter comparison, export and quantization runner for `omo-routing-proposal-v1`. | Reviewed corpus, locked training stack, protected environment and owner-approved budget. |
+| OMO-008 | P1 / preparation complete; execution blocked | After the required corpus, stack, environment and budget approvals, execute the isolated Transformers/TRL SFT, full-versus-adapter comparison, export and quantization plan for `omo-routing-proposal-v1`. | Reviewed corpus, locked training stack, protected environment and owner-approved budget. |
 | OMO-009 | P1 / partial; evidence blocked | Complete fixed-provider baselines, selective calibration, source/license audit and human review on the enlarged corpus. | Live calls, human review and promotion require approval. |
 | OMO-013 | P0 / partial; review/Hub blocked | Complete human review and quality/license approval for the 52-record corpus, then publish an immutable dataset revision. | Bootstrap labels, dataset publication authority and review process. |
 | OMO-014 | P1 / partial; activation blocked | Keep the manual-only preflight and activate a real isolated job only after all lineage, budget, credential and review gates pass. | HF Jobs eligibility, protected `training` environment, scoped credentials and approved spend. |

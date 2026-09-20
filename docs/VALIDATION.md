@@ -8,19 +8,22 @@ remaining work is tracked in [TODO](../TODO.md),
 The evidence below is not a claim that paid training, live-provider evaluation
 or publication has been performed.
 
-## Current main verification — PR #24, 2026-09-20
+## Current main verification — PR #26, 2026-09-20
 
-PR [#24](https://github.com/bassemZohdy/open-model-orchestrator/pull/24) merged
-the release-contract improvement into `main` at
-`935650ca3fa32d489f07fbe6678b01b58889dfcf`. Its head commit
-`e2bde2272eba5875f67d0bca8e8a1d42c5c2bba0` passed the
-[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35518822619)
-and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35518822673).
+PR [#26](https://github.com/bassemZohdy/open-model-orchestrator/pull/26) merged
+runtime/release hardening and the Claude review workflow fix into `main` at
+`b009102d5c30b938be1cdfd844ecbc5d636467a8`. Its head commit
+`d04f62ad9d4dee8bb31b5a78218f2413d3ba682c` passed the
+[OMO validation run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35520659682)
+and the [Claude review run](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35520659684).
 The validation passed static checks, secret scanning, real-model validation and
 native AMD64/ARM64 container acceptance. Local verification on the merged tree
-passed 212 non-model tests, with 12 model tests deselected, plus Ruff,
-formatting, mypy, dataset/evaluation/training/access/publication/model-
-promotion/release contracts and the OMO-015 artifact-contract tests.
+passed 214 non-model tests, with 12 model tests deselected, plus three review-
+workflow tests, Ruff, formatting, mypy, dataset/evaluation/training/access/
+publication/model-promotion/release contracts and the OMO-015 artifact-contract
+tests. The post-merge `main` validation run
+[35530212896](https://github.com/bassemZohdy/open-model-orchestrator/actions/runs/35530212896)
+also passed its native AMD64/ARM64, real-model, static and secret checks.
 
 This verifies the repository implementation only. Public Docker publication
 still requires the protected release workflow, security/signing approval and
@@ -92,7 +95,7 @@ Development tests may pass while security reports contain release-blocking findi
 
 | Destination | Verified state |
 |---|---|
-| GitHub `bassemZohdy/open-model-orchestrator` | Current `main` is `935650c` after PR #24; repository validation is green, with no model publication or stable application release |
+| GitHub `bassemZohdy/open-model-orchestrator` | Current `main` is `b009102` after PR #26; repository validation is green, with no model publication or stable application release |
 | Docker Hub `bzohdy/open-model-orchestrator` | Actions credentials configured and login verified in run `34754068464`; a successful project-image push and immutable digest still need to be recorded; no candidate/stable image published by this work |
 | HF `BassemZohdy/open-model-orchestrator` | Repository created by the owner; no approved OMO fine-tuned artifact is published |
 | HF `BassemZohdy/open-model-orchestrator-dataset` | Intended dataset target; immutable publication and publishing authority remain unverified |
