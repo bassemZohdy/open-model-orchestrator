@@ -39,3 +39,15 @@ hf repos create BassemZohdy/open-model-orchestrator-dataset --type dataset
 These are setup commands, not claims that the resources exist. No HF upload workflow is enabled until the publisher authorization, licensing and artifact identity are verified. Model and application releases must remain separate. Application changes never trigger retraining.
 
 Release manifest must bind exact code commit, platform image digests, model checksum/revision/template/quantization, dataset hash, evaluation and policy/calibration revisions. Candidate records capture partial publication. Stable promotion/signature verification is not yet implemented; keep the previous complete pinned deployment until it is. Never report a skipped workflow as published. Rollback is redeploying the preceding complete approved manifest's image digest, not rebuilding a mutable tag.
+
+An approved model bundle must also pass the offline OMO-015 artifact contract
+before publication:
+
+```bash
+uv run --no-sync python scripts/check_model_artifact.py \
+  --manifest artifacts/model-artifact.json \
+  --artifact-root artifacts/model
+```
+
+The command verifies the bundle and its evidence only; it does not enable
+training, contact a provider, upload to Hugging Face or publish to Docker Hub.
