@@ -6,6 +6,8 @@
   with explicit fail-closed errors.
 - Converted release, training, access-policy and container smoke gates from
   optimization-sensitive assertions to explicit failures.
+- Increased the bounded Claude review budget after repeated incomplete reviews
+  exhausted the previous 20-turn limit without posting a result.
 - Strengthened stable-release promotion evidence to require digest-bound,
   per-platform SBOM, provenance and signature identity records.
 

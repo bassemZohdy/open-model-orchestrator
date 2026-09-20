@@ -52,7 +52,7 @@ def test_reviewer_trust_and_execution_bounds() -> None:
     assert "Never edit files" in inputs["prompt"]
     assert "${{ env.REVIEW_HEAD_SHA }}" in inputs["prompt"]
     assert "identify that commit" in inputs["prompt"]
-    assert "--max-turns 20" in inputs["claude_args"]
+    assert "--max-turns 40" in inputs["claude_args"]
     assert '--disallowedTools "Edit,Write,NotebookEdit"' in inputs["claude_args"]
 
 
